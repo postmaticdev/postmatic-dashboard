@@ -1,4 +1,4 @@
-// src/i18n/navigation.ts
+// i18n/navigation.ts
 import { createNavigation } from "next-intl/navigation";
 import { routing } from "./routing";
 
