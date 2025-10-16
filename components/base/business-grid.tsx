@@ -5,7 +5,7 @@ import { Member } from "@/models/api/business/index.type";
 import { useBusinessGetAll } from "@/services/business.api";
 import { useState } from "react";
 import { PaginationControls } from "../ui/pagination-controls";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 import { MemberManagementModal } from "@/app/[locale]/business/[businessId]/settings/(components)/member-management-modal";
 import { initialPagination } from "@/models/api/base-response.type";
 import { ChartNoAxesCombined } from "lucide-react";

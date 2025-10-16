@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { BusinessKnowledge } from "@/app/[locale]/business/new-business/(components)/business-knowledge";
@@ -13,7 +13,7 @@ import { showToast } from "@/helper/show-toast";
 import { useBusinessCreate } from "@/services/business.api";
 
 import { useBusinessKnowledgeSchema, useProductKnowledgeSchema, useRoleKnowledgeSchema } from "@/validator/new-business/schema-with-i18n";
-import { Link } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 

@@ -3,7 +3,7 @@
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useBusinessGridFilter } from "@/contexts/business-grid-context";

@@ -15,7 +15,7 @@ import BusinessClientLayout from "./client-layout";
 import { Locale, routing } from "@/i18n/routing";
 import { redirect } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages} from "next-intl/server";
+import { getMessages } from "next-intl/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,9 +64,7 @@ export default async function RootLayout({
                           <CheckoutProvider>
                             <BusinessGridFilterProvider>
                               <BusinessClientLayout>
-                                <main>
-                                  {children}
-                                </main>
+                                <main>{children}</main>
                               </BusinessClientLayout>
                             </BusinessGridFilterProvider>
                           </CheckoutProvider>

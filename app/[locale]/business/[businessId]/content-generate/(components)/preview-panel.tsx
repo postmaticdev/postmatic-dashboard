@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { CardNoGap } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { HistoryModal } from "@/app/[locale]/business/[businessId]/content-generate/(components)/history-modal";
 import { FullscreenImageModal } from "@/app/[locale]/business/[businessId]/content-generate/(components)/fullscreen-image-modal";
@@ -240,17 +240,20 @@ export function PreviewPanel() {
             <>
               {!isDraftSaved ? (
                 <Button
-                onClick={onSaveDraft}
-                variant="outline"
-                className="flex-grow"
-                disabled={isLoading}
+                  onClick={onSaveDraft}
+                  variant="outline"
+                  className="flex-grow"
+                  disabled={isLoading}
                 >
                   {t("saveAsDraft")}
                 </Button>
               ) : (
-                <Link className="flex-grow" href={`/business/${businessId}/content-scheduler`}>
+                <Link
+                  className="flex-grow"
+                  href={`/business/${businessId}/content-scheduler`}
+                >
                   <Button variant="outline" className="w-full">
-                      {t("viewInContentLibrary")}
+                    {t("viewInContentLibrary")}
                   </Button>
                 </Link>
               )}
@@ -262,7 +265,7 @@ export function PreviewPanel() {
                   onClick={() => onSelectHistory(null)}
                 >
                   <RotateCcw className="h-5 w-5" />
-                    {t("resetForm")}
+                  {t("resetForm")}
                 </Button>
               )}
             </>

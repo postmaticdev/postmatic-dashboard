@@ -9,7 +9,7 @@ import {
   useAppProductGetSubscription,
   useAppProductGetToken,
 } from "@/services/app-product.api";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { formatIdr } from "@/helper/formatter";
 import {

@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { MoreVertical } from "lucide-react";
-import { Link } from "@/i18n/routing";
-import { useRouter } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

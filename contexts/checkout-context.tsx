@@ -8,7 +8,7 @@ import {
 import { CheckoutRes } from "@/models/api/purchase/checkout.type";
 import { useAppProductGetProductDetail } from "@/services/app-product.api";
 import { useParams, useSearchParams } from "next/navigation";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 
 import { createContext, useContext, useEffect, useState } from "react";
 

@@ -4,7 +4,7 @@ import { Header } from "@/components/base/header";
 import { Sidebar } from "@/components/sidebar";
 import { cn } from "@/lib/utils";
 import { useParams} from "next/navigation";
-import { usePathname } from "@/i18n/routing";
+import { usePathname } from "@/i18n/navigation";
 
 const SKIP_HEADER_PATHS = [
   "/business/[businessId]/pricing/checkout",

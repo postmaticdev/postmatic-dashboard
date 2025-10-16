@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ConnectedPlatformForm } from "@/app/[locale]/business/[businessId]/knowledge-base/(components)/(form)/connected-platform-form";
-import { Link } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
 import { LANDING_PAGE_URL } from "@/constants";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";

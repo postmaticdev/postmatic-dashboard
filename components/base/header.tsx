@@ -12,7 +12,7 @@ import { ProfileDropdown } from "./profile-dropdown";
 import { MobileMenu } from "../mobile-menu";
 import Image from "next/image";
 import { useBusinessGetAll } from "@/services/business.api";
-import { useRouter, usePathname, Link } from "@/i18n/routing";
+import { useRouter, usePathname, Link } from "@/i18n/navigation";
 import {
   useParams,
   useSearchParams,

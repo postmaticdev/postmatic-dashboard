@@ -45,7 +45,7 @@ import {
 } from "@/services/library.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { useRouter, usePathname } from "@/i18n/routing";
+import { useRouter, usePathname } from "@/i18n/navigation";
 
 import {
   Dispatch,

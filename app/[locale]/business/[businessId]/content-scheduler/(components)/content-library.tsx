@@ -8,7 +8,7 @@ import { BookOpen, Search, X } from "lucide-react";
 import { CreatePostModal } from "./create-post-modal";
 import { ViewPostModal } from "./view-post-modal";
 import Image from "next/image";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 import {
   useContentDraftDirectPostFromDraft,
   useContentDraftGetAllDraftImage,

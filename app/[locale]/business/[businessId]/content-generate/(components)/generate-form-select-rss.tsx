@@ -10,7 +10,7 @@ import { dateFormat } from "@/helper/date-format";
 import { useRssKnowledgeGetById } from "@/services/knowledge.api";
 import { ChartNoAxesCombined } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 

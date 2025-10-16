@@ -27,7 +27,7 @@ import {
   useRssKnowledgeGetById,
   useRssKnowledgeUpdate,
 } from "@/services/knowledge.api";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/navigation";
 import { useParams, useSearchParams } from "next/navigation";
 import { AddRssPld, RssRes } from "@/models/api/knowledge/rss.type";
 import { showToast } from "@/helper/show-toast";
