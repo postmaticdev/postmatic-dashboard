@@ -47,6 +47,7 @@ export interface GenerateContentAdvanceBase {
     uniqueSellingPoint: boolean;
     website: boolean;
     visionMission: boolean;
+    colorTone: boolean;
   };
   productKnowledge: {
     name: boolean;
@@ -266,6 +267,7 @@ export interface AdvancedGenerate {
     uniqueSellingPoint: boolean;
     website: boolean;
     visionMission: boolean;
+    colorTone: boolean;
   };
   productKnowledge: {
     name: boolean;

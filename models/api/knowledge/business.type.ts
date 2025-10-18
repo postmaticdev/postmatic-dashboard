@@ -8,6 +8,7 @@ export interface BusinessKnowledgePld {
   website: string;
   location: string;
   uniqueSellingPoint: string;
+  colorTone: string;
 }
 
 /** Business knowledge response */
@@ -22,6 +23,7 @@ export interface BusinessKnowledgeRes {
   website: string;
   location: string;
   uniqueSellingPoint: string;
+  colorTone: string;
   rootBusinessId: string;
   deletedAt: string | null;
   createdAt: string | null;

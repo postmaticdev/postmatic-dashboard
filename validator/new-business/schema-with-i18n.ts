@@ -8,6 +8,7 @@ export const useBusinessKnowledgeSchema = () => {
   const t = useTranslations("businessKnowledge");
   
   const messages = {
+    zodColorTone: t("zodColorTone"),
     zodLogoBrand: t("zodLogoBrand"),
     zodBrandName: t("zodBrandName"),
     zodCategory: t("zodCategory"),

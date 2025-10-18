@@ -65,6 +65,7 @@ export interface Template {
   name: string;
   imageUrl: string;
   categories: string[];
+  productCategories: string[];
   publisher: string;
   createdAt: string;
   updatedAt: string;
@@ -196,6 +197,7 @@ const initialEnabledAdvance: ContentGenerateContext["form"]["enabledAdvance"] =
       visionMission: false,
       website: false,
       logo: false,
+      colorTone: false,
     },
     productKnowledge: {
       name: false,
@@ -233,6 +235,7 @@ const initialFormAdvance: GenerateContentAdvanceBase = {
     visionMission: false,
     website: false,
     logo: true,
+    colorTone: true,
   },
   productKnowledge: {
     category: false,
@@ -541,11 +544,13 @@ export const ContentGenerateProvider = ({
   }, [publishedRes]);
   const publishedData: Template[] = (publishedRes?.data.data || []).map(
     (item) => {
+      
       return {
         id: item?.id,
         name: item?.name,
         imageUrl: item?.imageUrl,
-        categories: item?.templateImageCategories.map((cat) => cat.name),
+        categories: item?.templateImageCategories.map((cat) => cat.name) || [],
+        productCategories: item?.templateProductCategories.map((cat) => cat.indonesianName) || [],
         price: 0,
         publisher: item?.publisher || "Postmatic",
         type: "published",
@@ -588,11 +593,13 @@ export const ContentGenerateProvider = ({
     }
   }, [savedRes]);
   const savedData: Template[] = (savedRes?.data.data || []).map((item) => {
+
     return {
       id: item?.templateImageContent?.id,
       name: item?.name,
       imageUrl: item?.imageUrl,
-      categories: item?.category,
+      categories: item?.templateImageContent?.templateImageCategories.map((cat) => cat.name) || [],
+      productCategories: item?.templateImageContent?.templateProductCategories.map((cat) => cat.indonesianName) || [],
       price: 0,
       publisher: item?.templateImageContent?.publisher || "Postmatic",
       type: "saved",

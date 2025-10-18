@@ -43,7 +43,7 @@ export function BusinessKnowledgeSection() {
   const handlePlatformClick = () => {
     setIsPlatformModalOpen(true);
   };
-  
+
   const b = useTranslations("businessKnowledge");
 
   return (
@@ -172,6 +172,21 @@ export function BusinessKnowledgeSection() {
                   {businessKnowledgeData?.data?.data?.visionMission ||
                     b("notAvailable")}
                 </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-2">
+                  {b("colorTone")}
+                </h3>
+                <div
+                  className="border-border border-2 rounded-md w-20 h-10"
+                  style={{
+                    backgroundColor: `#${
+                      (
+                        businessKnowledgeData?.data?.data?.colorTone ?? ""
+                      ).replace(/^#/, "") || "FFFFFF"
+                    }`,
+                  }}
+                />
               </div>
             </div>
           </div>

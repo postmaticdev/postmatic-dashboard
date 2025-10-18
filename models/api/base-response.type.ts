@@ -42,6 +42,7 @@ export interface FilterQuery {
   skip: number;
   sortBy: string;
   category: string;
+  productCategory: string;
 }
 
 export const initialPagination: Pagination = {

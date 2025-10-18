@@ -70,6 +70,11 @@ export const GenerateFormAdvanced = () => {
       label: t("logo"),
       enabled: enabledAdvance?.businessKnowledge?.logo && !isLoading,
     },
+    {
+      key: "colorTone",
+      label: t("colorTone"),
+      enabled: enabledAdvance?.businessKnowledge?.colorTone && !isLoading,
+    },
   ];
 
   const PRODUCT_OPTIONS: { key: keyof PK; label: string; enabled: boolean }[] =

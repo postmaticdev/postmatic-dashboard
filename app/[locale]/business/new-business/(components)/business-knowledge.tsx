@@ -1,6 +1,7 @@
 "use client";
 
 import { BusinessCategoryDropdown } from "@/components/forms/business-category-dropdown";
+import { ColorPickerField } from "@/components/forms/colorpickerfield";
 import { TextField } from "@/components/forms/text-field";
 import { UploadPhoto } from "@/components/forms/upload-photo";
 import { useFormNewBusiness } from "@/contexts/form-new-business-context";
@@ -30,6 +31,7 @@ export function BusinessKnowledge() {
     uniqueSellingPoint: t("uniqueSellingPoint"),
     urlWebsite: t("urlWebsite"),
     location: t("location"),
+    colorTone: t("colorTone"),
   };
 
   const defaultPlaceholders = {
@@ -40,6 +42,7 @@ export function BusinessKnowledge() {
     uniqueSellingPoint: t("uniqueSellingPointPlaceholder"),
     urlWebsite: t("urlWebsitePlaceholder"),
     location: t("locationPlaceholder"),
+    colorTone: "FFFFFF",
   };
 
   const finalLabels = { ...defaultLabels };
@@ -130,6 +133,13 @@ export function BusinessKnowledge() {
         placeholder={finalPlaceholders.location}
         error={errors.step1.location}
         onFocus={() => clearFieldError(0, "location")}
+      />
+
+      <ColorPickerField
+        label={finalLabels.colorTone}
+        value={step1.colorTone} // "FF00FF" (tanpa #) dari DB/form
+        onChange={(val) => updateField("colorTone", val)} // val juga "FF00FF"
+        error={errors.step1.colorTone}
       />
     </div>
   );

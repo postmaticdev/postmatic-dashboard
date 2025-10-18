@@ -95,7 +95,12 @@ const templateService = {
   },
   getCategory: () => {
     return api.get<BaseResponse<TemplateCategoryRes[]>>(
-      `/library/template/category`
+      `/library/template/category/type`
+    );
+  },
+  getProductCategory: () => {
+    return api.get<BaseResponse<TemplateCategoryRes[]>>(
+      `/library/template/category/product`
     );
   },
   deleteSaved: (idBusiness: string, templateId: string) => {
@@ -155,6 +160,15 @@ export const useLibraryTemplateGetCategory = () => {
     enabled: true,
   });
 };
+
+export const useLibraryTemplateGetProductCategory = () => {
+  return useQuery({
+    queryKey: ["libraryTemplateProductCategory"],
+    queryFn: () => templateService.getProductCategory(),
+    enabled: true,
+  });
+};
+
 
 export const useLibraryTemplateDeleteSaved = () => {
   const queryClient = useQueryClient();

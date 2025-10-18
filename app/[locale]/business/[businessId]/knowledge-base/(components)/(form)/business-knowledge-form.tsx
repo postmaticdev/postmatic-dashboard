@@ -1,6 +1,7 @@
 "use client";
 
 import { BusinessCategoryDropdown } from "@/components/forms/business-category-dropdown";
+import { ColorPickerField } from "@/components/forms/colorpickerfield";
 import { TextField } from "@/components/forms/text-field";
 import { UploadPhoto } from "@/components/forms/upload-photo";
 import { useManageKnowledge } from "@/contexts/manage-knowledge-context";
@@ -30,15 +31,14 @@ export function BusinessKnowledgeForm() {
     uniqueSellingPoint: b("uniqueSellingPoint"),
     urlWebsite: b("urlWebsite"),
     location: b("location"),
+    colorTone: b("colorTone"),
   };
 
   const defaultPlaceholders = {
     brandName: b("brandNamePlaceholder"),
     category: b("categoryPlaceholder"),
-    description:
-      b("descriptionPlaceholder"),
-    visionMission:
-      b("visionMissionPlaceholder"),
+    description: b("descriptionPlaceholder"),
+    visionMission: b("visionMissionPlaceholder"),
     uniqueSellingPoint: b("uniqueSellingPointPlaceholder"),
     urlWebsite: b("urlWebsitePlaceholder"),
     location: b("locationPlaceholder"),
@@ -123,6 +123,21 @@ export function BusinessKnowledgeForm() {
         onChange={(value) => updateField("location", value)}
         placeholder={finalPlaceholders.location}
         error={errors.business.location}
+      />
+
+      {/* <TextField
+        label={finalLabels.colorTone}
+        value={formKnowledge?.business?.colorTone}
+        onChange={(value) => updateField("colorTone", value)}
+        placeholder="palpale"
+        error={errors.business.colorTone}
+      /> */}
+
+      <ColorPickerField
+        label={finalLabels.colorTone}
+        value={formKnowledge?.business?.colorTone} // "FF00FF" (tanpa #) dari DB/form
+        onChange={(val) => updateField("colorTone", val)} // val juga "FF00FF"
+        error={errors.business.colorTone}
       />
     </div>
   );

@@ -66,6 +66,11 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
             ) : ""}
           </span>
         </div>
+        <div className="absolute bottom-2 right-2">
+          <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">
+            {item.productCategories}
+          </span>
+        </div>
       </div>
 
       <div className="space-y-2 -mt-3">

@@ -1,5 +1,21 @@
 import z from "zod";
 
+/** Helper: normalisasi ke 6-hex tanpa '#' + uppercase, dengan default saat undefined */
+const color6HexPreprocess = (v: unknown, fallback = "E5E7EB") => {
+  if (typeof v !== "string") return fallback;
+  const cleaned = v.trim().replace(/^#/, "").toUpperCase();
+  return cleaned || fallback;
+};
+
+/** Factory untuk validator colorTone dengan i18n message */
+const colorToneSchemaWithMsg = (msg: string) =>
+  z.preprocess(
+    (v) => color6HexPreprocess(v, "E5E7EB"),
+    z
+      .string()
+      .regex(/^[0-9A-F]{6}$/, { message: msg }) // pastikan 6 hex
+  );
+
 // Function to create business knowledge schema with i18n messages
 export const createBusinessKnowledgeSchema = (messages: {
   zodLogoBrand: string;
@@ -10,11 +26,13 @@ export const createBusinessKnowledgeSchema = (messages: {
   zodUniqueSellingPoint: string;
   zodUrlWebsite: string;
   zodLocation: string;
+  zodColorTone: string;
   zodMaxLengthBrandName: string;
   zodMaxLengthDescription: string;
   zodMaxLengthVisionMission: string;
   zodMaxLengthUniqueSellingPoint: string;
   zodMaxLengthLocation: string;
+
 }) => z.object({
   primaryLogo: z.string().min(1, messages.zodLogoBrand),
   name: z
@@ -39,6 +57,7 @@ export const createBusinessKnowledgeSchema = (messages: {
     .string()
     .min(1, messages.zodLocation)
     .max(200, messages.zodMaxLengthLocation),
+    colorTone: colorToneSchemaWithMsg(messages.zodColorTone),
 });
 
 // Default schema with Indonesian messages (for backward compatibility)
@@ -66,6 +85,10 @@ export const businessKnowledgeSchema = z.object({
     .string()
     .min(1, "Harap masukkan lokasi bisnis")
     .max(200, "Lokasi bisnis harus kurang dari 200 karakter"),
+    colorTone: z.preprocess(
+      (v) => color6HexPreprocess(v, "E5E7EB"),
+      z.string().regex(/^[0-9A-F]{6}$/, { message: "Harap masukkan warna tone bisnis (6 digit hex)" })
+    ),
 });
 
 export type BusinessKnowledgePld = z.infer<typeof businessKnowledgeSchema>;

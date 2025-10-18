@@ -7,8 +7,9 @@ export interface SavedTemplatePld {
 export interface SavedTemplateRes {
   name: string;
   imageUrl: string;
-  category: string[];
   templateImageContent: TemplateImageContent;
+  templateImageCategories: TemplateImageCategories[];
+  templateProductCategories: TemplateProductCategories[];
   createdAt: string;
   updatedAt: string;
 }
@@ -16,12 +17,18 @@ export interface SavedTemplateRes {
 export interface TemplateImageContent {
   id: string;
   publisher: string | null;
+  templateImageCategories: TemplateImageCategories[];
+  templateProductCategories: TemplateProductCategories[];
 }
 export interface TemplateImageCategories {
   id: string;
   name: string;
 }
 
+export interface TemplateProductCategories {
+  id: string;
+  indonesianName: string;
+}
 /* response for get published templates */
 export interface PublishedTemplateRes {
   id: string;
@@ -29,14 +36,22 @@ export interface PublishedTemplateRes {
   imageUrl: string;
   publisher: string | null;
   templateImageCategories: TemplateImageCategories[];
+  templateProductCategories: TemplateProductCategories[];
   createdAt: string;
   updatedAt: string;
 }
 
-/* response for get template categories */
+/* response for get template categories promotional, showcase, etc*/
 export interface TemplateCategoryRes {
   id: string;
   name: string;
+  _count: Count;
+}
+
+/* response for get template product categories makanan, snack, etc*/
+export interface TemplateProductCategoryRes {
+  id: string;
+  indonesianName: string;
   _count: Count;
 }
 
