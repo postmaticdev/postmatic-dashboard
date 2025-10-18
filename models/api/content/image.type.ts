@@ -27,7 +27,8 @@ export interface ImageContentRes {
 /*
   Payload for Generate Content
 */
-export type ValidRatio = "1:1" | "2:3" | "3:2";
+export type ValidRatio = "1:1" | "2:3" | "3:2" | "3:4" | "4:3" |"4:5" | "5:4" | "9:16" | "16:9" |"21:9"
+;
 export interface GenerateContentBase {
   ratio: ValidRatio;
   category: string;
@@ -35,6 +36,7 @@ export interface GenerateContentBase {
   designStyle: string | null;
   prompt: string | null;
   referenceImage: string | null;
+  model: string;
 }
 
 export interface GenerateContentAdvanceBase {

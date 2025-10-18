@@ -186,6 +186,9 @@ export function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
                                 {mapEnumJobStatus.getLabel(item.status)}
                               </Badge>
                               <Badge variant="outline">
+                                {item?.input?.model}
+                              </Badge>
+                              <Badge variant="outline">
                                 {item?.input?.ratio}
                               </Badge>
                               {item?.input?.designStyle && (

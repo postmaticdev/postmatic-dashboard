@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 
 export const GenerateFormBasic = () => {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  const { form, isLoading, selectedHistory } = useContentGenerate();
+  const { form, isLoading, selectedHistory, aiModels, onSelectAiModel } = useContentGenerate();
   const { basic, setBasic } = form;
   const disabled = selectedHistory !== null;
   const t = useTranslations("generationPanel");
@@ -126,7 +126,6 @@ export const GenerateFormBasic = () => {
     },
   ];
   
-  const RATIO_OPTIONS = ["1:1", "2:3", "3:2"];
   return (
     <div className="space-y-4">
       {/* Product Name */}
@@ -151,6 +150,33 @@ export const GenerateFormBasic = () => {
         </Button>
       </div>
 
+      {/* AI Model */}
+      <div>
+        <label className="block text-sm font-medium mb-2">AI Model</label>
+        <select
+          className={cn(
+            "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
+            isLoading ||
+              (disabled && "opacity-50 cursor-not-allowed hover:bg-transparent")
+          )}
+          disabled={isLoading || disabled || aiModels.isLoading}
+          value={basic?.model || ""}
+          onChange={(e) => {
+            if (disabled) return;
+            const selectedModel = aiModels.models.find(model => model.name === e.target.value);
+            if (selectedModel) {
+              onSelectAiModel(selectedModel);
+            }
+          }}
+        >
+          {aiModels.models.map((model) => (
+            <option key={model.name} value={model.name}>
+              {model.description}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Aspect Ratio */}
       <div>
         <label className="block text-sm font-medium mb-2">{t("aspectRatio")}</label>
@@ -161,12 +187,13 @@ export const GenerateFormBasic = () => {
               (disabled && "opacity-50 cursor-not-allowed hover:bg-transparent")
           )}
           disabled={isLoading || disabled}
+          value={basic?.ratio || ""}
           onChange={(e) => {
             if (disabled) return;
             setBasic({ ...basic, ratio: e.target.value as ValidRatio });
           }}
         >
-          {RATIO_OPTIONS.map((option) => (
+          {aiModels.validRatios.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>

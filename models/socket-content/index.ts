@@ -103,6 +103,7 @@ export interface JobData {
     referenceImage: string | null;
     advancedGenerate: GenerateContentAdvanceBase;
     productKnowledgeId: string;
+    model: string;
   };
   error: { message: string; stack: string | null; attempt: number } | null;
   stage: JobStage;

@@ -16,6 +16,7 @@ import {
   SaveContentRes,
   SetReadyToPostRes,
 } from "@/models/api/content/image.type";
+import { AiModelRes } from "@/models/api/content/ai-model";
 import {
   AutoSchedulerPld,
   AutoSchedulerRes,
@@ -469,8 +470,24 @@ export const useContentSchedulerTimezoneUpsertTimezone = () => {
   });
 };
 
-// ============================== JOB ==============================
+// ============================== AIMODEL ==============================
 
+const aiModelService = {
+  getAiModels: () => {
+    return api.get<BaseResponse<AiModelRes[]>>(
+      `/content/ai-model/image`
+    );
+  },
+};
+
+export const useContentAiModelGetAiModels = () => {
+  return useQuery({
+    queryKey: ["contentAiModelGetAiModels"],
+    queryFn: () => aiModelService.getAiModels(),
+  });
+};
+
+// ============================== JOB ==============================
 export const jobContentService = {
   getAllJob: (businessId: string) => {
     return api.get<BaseResponse<GetAllJob[]>>(

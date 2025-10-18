@@ -11,6 +11,7 @@ import {
   GenerateContentBase,
   GenerateContentRes,
   GenerateContentRssBase,
+  ValidRatio,
 } from "@/models/api/content/image.type";
 import { ProductKnowledgeRes } from "@/models/api/knowledge/product.type";
 import { RssArticleRes } from "@/models/api/library/rss.type";
@@ -18,6 +19,7 @@ import {
   PublishedTemplateRes,
   SavedTemplateRes,
 } from "@/models/api/library/template.type";
+import { AiModelRes } from "@/models/api/content/ai-model";
 import {
   GetAllJob,
   JobData,
@@ -31,6 +33,7 @@ import {
   useContentJobMaskOnJob,
   useContentJobRegenerateOnJob,
   useContentJobRssOnJob,
+  useContentAiModelGetAiModels,
 } from "@/services/content/content.api";
 import {
   useProductKnowledgeGetAll,
@@ -84,6 +87,7 @@ interface BasicForm extends GenerateContentBase {
   customDesignStyle: string;
   referenceImageName: string | null;
   caption: string;
+  model: string;
 }
 
 interface ContentGenerateContext {
@@ -160,6 +164,14 @@ interface ContentGenerateContext {
   selectedHistory: JobData | null;
   onSelectHistory: (item: JobData | null) => void;
 
+  // AI Models
+  aiModels: {
+    models: AiModelRes[];
+    selectedModel: AiModelRes | null;
+    validRatios: string[];
+    isLoading: boolean;
+  };
+
   // Draft saved state
   isDraftSaved: boolean;
   setIsDraftSaved: (saved: boolean) => void;
@@ -180,6 +192,7 @@ interface ContentGenerateContext {
   }) => void;
   onSaveDraft: () => void;
   onResetAdvance: () => void;
+  onSelectAiModel: (model: AiModelRes) => void;
 
   // // Socket
   socketEvent: {
@@ -224,6 +237,7 @@ const initialFormBasic: ContentGenerateContext["form"]["basic"] = {
   customDesignStyle: "",
   referenceImageName: null,
   caption: "",
+  model: "",
 };
 
 const initialFormAdvance: GenerateContentAdvanceBase = {
@@ -285,6 +299,7 @@ export const ContentGenerateProvider = ({
   const { data: historiesRes, refetch: refetchHistories } =
     useContentJobGetAllJob(businessId);
   const { data: productCategoriesData } = useLibraryTemplateGetProductCategory();
+  const { data: aiModelsRes, isLoading: isLoadingAiModels } = useContentAiModelGetAiModels();
 
   const [histories, setHistories] = useState<GetAllJob[]>([]);
 
@@ -316,6 +331,25 @@ export const ContentGenerateProvider = ({
     null
   );
   const [isDraftSaved, setIsDraftSaved] = useState<boolean>(false);
+  
+  // AI Models state
+  const [selectedAiModel, setSelectedAiModel] = useState<AiModelRes | null>(null);
+
+  // Set default AI model when models are loaded
+  useEffect(() => {
+    if (aiModelsRes?.data?.data && aiModelsRes.data.data.length > 0 && !selectedAiModel) {
+      setSelectedAiModel(aiModelsRes.data.data[0]);
+      setFormBasic(prev => ({
+        ...prev,
+        model: aiModelsRes.data.data[0].name
+      }));
+    }
+  }, [aiModelsRes, selectedAiModel]);
+
+  // Get valid ratios from selected model
+  const validRatios = useMemo(() => {
+    return selectedAiModel?.validRatios || [];
+  }, [selectedAiModel]);
 
   const onSelectHistory = useCallback((item: JobData | null) => {
     if (item) {
@@ -333,7 +367,8 @@ export const ContentGenerateProvider = ({
         designStyle: item?.input?.designStyle || "",
         customDesignStyle: item?.input?.designStyle || "",
         referenceImage: item?.result?.images[0] || "",
-        ratio: item?.result?.ratio || "1:1",
+        ratio: (item?.result?.ratio || "1:1") as ValidRatio,
+        model: item?.input?.model || "",
       }));
       setSelectedJobId(item.id);
       setFormAdvance(initialFormAdvance);
@@ -802,6 +837,15 @@ export const ContentGenerateProvider = ({
     setFormAdvance(initialFormAdvance);
   };
 
+  const onSelectAiModel = (model: AiModelRes) => {
+    setSelectedAiModel(model);
+      setFormBasic(prev => ({
+        ...prev,
+        model: model.name,
+        ratio: (model.validRatios[0] || "1:1") as ValidRatio // Set to first valid ratio
+      }));
+  };
+
   /**
    *
    * HANDLER GENERATE
@@ -840,6 +884,7 @@ export const ContentGenerateProvider = ({
               prompt: form.basic.prompt,
               productKnowledgeId: form.basic.productKnowledgeId,
               referenceImage: form.basic.referenceImage,
+              model: form.basic.model,
             },
           });
 
@@ -872,6 +917,7 @@ export const ContentGenerateProvider = ({
                   : form.basic.category,
               advancedGenerate: form.advance,
               rss: form.rss,
+              model: form.basic.model,
             },
           });
 
@@ -904,6 +950,7 @@ export const ContentGenerateProvider = ({
               caption: form.basic.caption || "",
               prompt: form.basic.prompt || "",
               ratio: selectedHistory.input.ratio,
+              model: form.basic.model,
             },
           });
 
@@ -942,6 +989,7 @@ export const ContentGenerateProvider = ({
                   : form.basic.category) || "",
               productKnowledgeId:
                 selectedHistory?.result?.productKnowledgeId || "",
+              model: form.basic.model,
             },
           });
           await afterSubmitGenerate(resMask?.data?.data?.jobId);
@@ -1132,6 +1180,14 @@ export const ContentGenerateProvider = ({
   const socketEvent: ContentGenerateContext["socketEvent"] = {
     isConnected,
   };
+
+  const aiModels: ContentGenerateContext["aiModels"] = {
+    models: aiModelsRes?.data?.data || [],
+    selectedModel: selectedAiModel,
+    validRatios,
+    isLoading: isLoadingAiModels,
+  };
+
   return (
     <ContentGenerateContext.Provider
       value={{
@@ -1164,6 +1220,8 @@ export const ContentGenerateProvider = ({
         isDraftSaved,
         setIsDraftSaved,
         socketEvent,
+        aiModels,
+        onSelectAiModel,
       }}
     >
       {children}
