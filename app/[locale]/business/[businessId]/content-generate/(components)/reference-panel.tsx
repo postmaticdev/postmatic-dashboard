@@ -17,6 +17,7 @@ import { TemplateCard } from "./template-card";
 import { helperService } from "@/services/helper.api";
 import { showToast } from "@/helper/show-toast";
 import { TemplateGridSkeleton } from "@/components/grid-skeleton/template-grid-skeleton";
+import { useLibraryTemplateGetProductCategory } from "@/services/library.api";
 import { useTranslations } from "next-intl";
 
 export function ReferencePanel() {
@@ -36,6 +37,7 @@ export function ReferencePanel() {
   );
 
   const { publishedTemplates, savedTemplates, form } = useContentGenerate();
+  const { data: productCategoriesData } = useLibraryTemplateGetProductCategory();
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -221,7 +223,8 @@ export function ReferencePanel() {
               filterQuery={publishedTemplates.filterQuery}
               currData={publishedTemplates.contents.length}
               setFilterQuery={publishedTemplates.setFilterQuery}
-              showSort={false}
+              productCategories={productCategoriesData?.data?.data || []}
+              showSort={true}
             />
 
             {/* Template Grid */}
@@ -269,6 +272,7 @@ export function ReferencePanel() {
               filterQuery={savedTemplates.filterQuery}
               currData={savedTemplates.contents.length}
               setFilterQuery={savedTemplates.setFilterQuery}
+              productCategories={productCategoriesData?.data?.data || []}
               showSort={false}
             />
             {/* Saved References Grid */}

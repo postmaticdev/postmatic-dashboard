@@ -14,6 +14,7 @@ import {
   SavedTemplatePld,
   SavedTemplateRes,
   TemplateCategoryRes,
+  TemplateProductCategoryRes,
 } from "@/models/api/library/template.type";
 import { TimezoneRes } from "@/models/api/library/time.type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -99,7 +100,7 @@ const templateService = {
     );
   },
   getProductCategory: () => {
-    return api.get<BaseResponse<TemplateCategoryRes[]>>(
+    return api.get<BaseResponse<TemplateProductCategoryRes[]>>(
       `/library/template/category/product`
     );
   },

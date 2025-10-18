@@ -42,6 +42,7 @@ import {
   useLibraryTemplateGetPublished,
   useLibraryTemplateGetSaved,
   useLibraryTemplateSave,
+  useLibraryTemplateGetProductCategory,
 } from "@/services/library.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
@@ -283,6 +284,7 @@ export const ContentGenerateProvider = ({
 
   const { data: historiesRes, refetch: refetchHistories } =
     useContentJobGetAllJob(businessId);
+  const { data: productCategoriesData } = useLibraryTemplateGetProductCategory();
 
   const [histories, setHistories] = useState<GetAllJob[]>([]);
 
@@ -560,8 +562,29 @@ export const ContentGenerateProvider = ({
     }
   );
 
+  // Client-side filtering by productCategory if server-side filtering is not working
+  const filteredPublishedData = useMemo(() => {
+    if (!publishedQuery.productCategory) {
+      return publishedData;
+    }
+    
+    // Find the product category name by ID
+    const selectedCategory = productCategoriesData?.data?.data?.find(
+      (cat) => cat.id === publishedQuery.productCategory
+    );
+    
+    if (!selectedCategory) {
+      return publishedData;
+    }
+    
+    // Filter templates that have the selected product category
+    return publishedData.filter(template => 
+      template.productCategories.includes(selectedCategory.indonesianName)
+    );
+  }, [publishedData, publishedQuery.productCategory, productCategoriesData]);
+
   const publishedTemplates: ContentGenerateContext["publishedTemplates"] = {
-    contents: publishedData,
+    contents: filteredPublishedData,
     pagination: publishedPagination,
     filterQuery: publishedQuery,
     setFilterQuery: setPublishedQuery,
@@ -608,8 +631,29 @@ export const ContentGenerateProvider = ({
     };
   });
 
+  // Client-side filtering by productCategory for saved templates
+  const filteredSavedData = useMemo(() => {
+    if (!savedQuery.productCategory) {
+      return savedData;
+    }
+    
+    // Find the product category name by ID
+    const selectedCategory = productCategoriesData?.data?.data?.find(
+      (cat) => cat.id === savedQuery.productCategory
+    );
+    
+    if (!selectedCategory) {
+      return savedData;
+    }
+    
+    // Filter templates that have the selected product category
+    return savedData.filter(template => 
+      template.productCategories.includes(selectedCategory.indonesianName)
+    );
+  }, [savedData, savedQuery.productCategory, productCategoriesData]);
+
   const savedTemplates: ContentGenerateContext["savedTemplates"] = {
-    contents: savedData,
+    contents: filteredSavedData,
     pagination: savedPagination,
     filterQuery: savedQuery,
     setFilterQuery: setSavedQuery,

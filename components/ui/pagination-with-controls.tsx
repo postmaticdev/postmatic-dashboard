@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -8,8 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowUp, ArrowDown } from "lucide-react";
 import { Pagination, FilterQuery } from "@/models/api/base-response.type";
+import { TemplateProductCategoryRes } from "@/models/api/library/template.type";
 import { useTranslations } from "next-intl";
 
 /**
@@ -42,6 +41,7 @@ interface PaginationWithControlsProps {
   filterQuery?: Partial<FilterQuery>;
   setFilterQuery: (q: Partial<FilterQuery>) => void;
   sortOptions?: SortOption[];
+  productCategories?: TemplateProductCategoryRes[];
   className?: string;
   currData: number;
   showSort?: boolean;
@@ -57,25 +57,29 @@ export function PaginationWithControls({
   filterQuery,
   className = "",
   sortOptions = [],
+  productCategories = [],
   setFilterQuery,
   currData,
   showSort = true,
 }: PaginationWithControlsProps) {
   const limitOptions = [5, 10, 20, 50];
 
-  const sort = filterQuery?.sort || "desc";
-  const sortBy = filterQuery?.sortBy || "createdAt";
+  const sort = filterQuery?.productCategory || "all";
+
+
+  // Generate sort options from product categories
+  const productCategorySortOptions: SortOption[] = productCategories.map(category => ({
+    label: category.indonesianName,
+    value: category.id,
+  }));
 
   const allSortOptions: SortOption[] = [
+    {
+      label: "Semua",
+      value: "all",
+    },
     ...sortOptions,
-    {
-      label: "Tanggal Dibuat",
-      value: "createdAt",
-    },
-    {
-      label: "Tanggal Diperbarui",
-      value: "updatedAt",
-    },
+    ...productCategorySortOptions,
   ];
 
   const t = useTranslations("paginationControls");
@@ -89,11 +93,11 @@ export function PaginationWithControls({
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
             <div className="flex gap-2">
               <Select
-                value={sortBy}
+                value={sort}
                 onValueChange={(value: string) =>
                   setFilterQuery({
                     ...filterQuery,
-                    sortBy: value,
+                    productCategory: value === "all" ? undefined : value,
                   })
                 }
               >
@@ -109,24 +113,7 @@ export function PaginationWithControls({
                 </SelectContent>
               </Select>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setFilterQuery({
-                    ...filterQuery,
-                    sort: sort === "asc" ? "desc" : "asc",
-                  })
-                }
-                className="h-9 px-3 text-xs"
-                title={`Urutkan ${sort === "asc" ? "Menurun" : "Menaik"}`}
-              >
-                {sort === "asc" ? (
-                  <ArrowUp className="h-3 w-3" />
-                ) : (
-                  <ArrowDown className="h-3 w-3" />
-                )}
-              </Button>
+              
             </div>
             <Select
               value={pagination?.limit.toString()}
