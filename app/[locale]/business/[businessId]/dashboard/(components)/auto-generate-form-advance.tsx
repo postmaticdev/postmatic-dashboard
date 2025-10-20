@@ -11,7 +11,7 @@ type BK = GenerateContentAdvanceBase["businessKnowledge"];
 type PK = GenerateContentAdvanceBase["productKnowledge"];
 type RK = GenerateContentAdvanceBase["roleKnowledge"];
 
-export const GenerateFormAdvanced = () => {
+export const AutoGenerateFormAdvanced = () => {
   const [advancedExpanded, setAdvancedExpanded] = useState(false);
   const [businessKnowledgeExpanded, setBusinessKnowledgeExpanded] =
     useState(false);

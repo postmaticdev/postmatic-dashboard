@@ -56,6 +56,7 @@ export function FormNewBusinessProvider({
       website: "",
       location: "",
       uniqueSellingPoint: "",
+      colorTone: "",
     },
     step2: {
       name: "",

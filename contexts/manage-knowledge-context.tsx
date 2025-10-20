@@ -32,6 +32,7 @@ const initialFormKnowledge: FormKnowledge = {
     website: "",
     location: "",
     uniqueSellingPoint: "",
+    colorTone: "",
   },
   role: {
     targetAudience: "",

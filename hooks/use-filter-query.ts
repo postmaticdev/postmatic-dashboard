@@ -18,6 +18,7 @@ const FilterQuerySchema = z.object({
   skip: z.coerce.number().default(0),
   sortBy: z.string().default("createdAt"),
   category: z.string().optional().default(""),
+  productCategory: z.string().optional().default(""),
 });
 
 export const useFilterQuery = (): FilterQuery | undefined => {

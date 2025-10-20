@@ -16,9 +16,12 @@ import { PlatformEnum } from "@/models/api/knowledge/platform.type";
 import { mapEnumPlatform } from "@/helper/map-enum-platform";
 import { dateManipulation } from "@/helper/date-manipulation";
 import { SchedulePost } from "../content-scheduler/(components)/schedule-post";
+import { AutoGenerate } from "./(components)/auto-generate";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { PlatformModal } from "../knowledge-base/(components)/platform-modal";
 
-export default function Dashboard() {
+function DashboardInner() {
   const w = useTranslations("welcomeSection");
   const d = useTranslations("dashboard");
   const a = useTranslations("analyticsCard");
@@ -26,6 +29,11 @@ export default function Dashboard() {
   const userName = profile?.data?.data?.name;
   const greeting = `${w("welcome")} ${userName}`;
   const { businessId } = useParams() as { businessId: string };
+
+  const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false);
+  const handleIfNoPlatformConnected = () => {
+    setIsPlatformModalOpen(true);
+  };
 
   const { data: countPostedData, isLoading: isLoadingCountPosted } =
     useContentOverviewGetCountPosted(businessId, {
@@ -132,6 +140,23 @@ export default function Dashboard() {
           <SchedulePost onDashboard={true} />
         </div>
       </div>
+
+      {/* Auto Generate Section */}
+      <h1 className="text-xl font-bold text-foreground mb-2">
+        {d("autoGenerate")}
+      </h1>
+      <div className="w-full">
+        <AutoGenerate handleIfNoPlatformConnected={handleIfNoPlatformConnected} />
+      </div>
+
+      <PlatformModal
+        isOpen={isPlatformModalOpen}
+        onClose={() => setIsPlatformModalOpen(false)}
+      />
     </main>
   );
+}
+
+export default function Dashboard() {
+  return <DashboardInner />;
 }
