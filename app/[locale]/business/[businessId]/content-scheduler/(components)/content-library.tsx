@@ -305,7 +305,7 @@ export function ContentLibrary({
               <div className="relative h-full w-full">
                 <Image
                   src={content.images[0] || DEFAULT_PLACEHOLDER_IMAGE}
-                  alt="Hino Dutro"
+                  alt="image content"
                   className="object-cover rounded-xl select-none pointer-events-none
              transform-gpu transition-transform duration-500 ease-out will-change-transform
              group-hover:scale-110"
@@ -375,7 +375,7 @@ export function ContentLibrary({
               <div className="relative h-full w-full">
                 <Image
                   src={content?.images[0] || DEFAULT_PLACEHOLDER_IMAGE}
-                  alt="Hino Dutro"
+                  alt="image content"
                   className="w-full h-full object-cover"
                   width={500}
                   height={500}

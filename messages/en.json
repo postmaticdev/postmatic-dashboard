@@ -223,6 +223,7 @@
   },
   "autoGenerate": {
     "autoGenerate": "Auto Generate",
+    "deleteSchedule": "Delete Schedule",
     "saving": "Saving...",
     "save": "Save",
     "configure": "Configure",

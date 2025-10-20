@@ -234,7 +234,7 @@ export function AdvancedTokenChart() {
   const d = useTranslations("dashboard");
   return (
     <ChartErrorBoundary>
-      <div className="w-full">
+      <div className="w-full bg-card rounded-lg p-4 border border-border">
         {/* Header with controls */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
           <div>
@@ -249,7 +249,7 @@ export function AdvancedTokenChart() {
         </div>
 
         {/* Chart container */}
-        <div className="bg-card rounded-lg p-4 border border-border">
+        <div className="">
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart

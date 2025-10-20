@@ -101,10 +101,10 @@ export function Sidebar() {
         }
       `}</style>
       <div className="hidden md:flex w-16 bg-card border-r border-border flex-col items-center py-6 fixed z-49 top-0 left-0 bottom-0 transition-all duration-300 ease-out">
-        <div className="h-24"></div>
+        <div className=""></div>
 
         {/* Main Navigation Items */}
-        <div className="flex flex-col space-y-6">
+        <div className="flex flex-col space-y-10 mt-auto ">
           {navigationItems.map((item, index) => {
             const isActive = pathname.includes(`${item.href}`);
             const Icon = item.icon;

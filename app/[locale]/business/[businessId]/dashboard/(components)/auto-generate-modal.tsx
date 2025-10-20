@@ -5,12 +5,12 @@ import {
   Dialog,
   DialogContent,
   DialogFooterWithButton,
+  DialogFooterWithTwoButtons,
   DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
 import { PlatformEnum } from "@/models/api/knowledge/platform.type";
 import { useTranslations } from "next-intl";
 import { AutoGenerateReferencePanel } from "./auto-generate-reference-panel";
@@ -24,11 +24,18 @@ import { AutoGenerateFormBasic } from "./auto-generate-form-basic";
 import { AutoGenerateFormAdvanced } from "./auto-generate-form-advance";
 import { AutoSelectedReferenceImage } from "./auto-selected-reference-image";
 import { TextField } from "@/components/forms/text-field";
+import { usePlatformKnowledgeGetAll } from "@/services/knowledge.api";
+import { mapEnumPlatform } from "@/helper/map-enum-platform";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { TimeInput } from "@/components/ui/time-input";
+import { Save, Sparkle, Sparkles, Trash2 } from "lucide-react";
 
 interface AutoGenerateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: () => void;
+  onDelete?: (scheduleId: string) => void;
   selectedDay: number | null;
   selectedTime: string;
   selectedPlatforms: PlatformEnum[];
@@ -39,6 +46,7 @@ export function AutoGenerateModal({
   isOpen,
   onClose,
   onSave,
+  onDelete,
   selectedDay,
   selectedTime,
   selectedPlatforms,
@@ -48,10 +56,13 @@ export function AutoGenerateModal({
   const mCreateSchedule = useContentAutoGenerateCreateSchedule();
   const mUpdateSchedule = useContentAutoGenerateUpdateSchedule();
   const { businessId } = useParams() as { businessId: string };
+  const { data: platformData } = usePlatformKnowledgeGetAll(businessId);
 
   // Form state
-  const [isActive, setIsActive] = useState<boolean>(true);
   const [additionalPrompt, setAdditionalPrompt] = useState<string>("");
+  const [modalSelectedPlatforms, setModalSelectedPlatforms] = useState<PlatformEnum[]>(selectedPlatforms);
+  const [modalHour, setModalHour] = useState<string>("");
+  const [modalMinute, setModalMinute] = useState<string>("");
   const prevBasicRef = useRef<typeof basic | null>(null);
   const prevAdvanceRef = useRef<typeof advance | null>(null);
 
@@ -80,6 +91,30 @@ export function AutoGenerateModal({
     return DAYS.find(day => day.value === dayValue)?.label || "";
   };
 
+  const togglePlatform = (platform: PlatformEnum) => {
+    setModalSelectedPlatforms((prev) =>
+      prev.includes(platform)
+        ? prev.filter((p) => p !== platform)
+        : [...prev, platform]
+    );
+  };
+
+  const handleModalHourChange = (value: string) => {
+    if (value === "") return setModalHour(value);
+    const n = Number(value);
+    if (!Number.isNaN(n) && n >= 0 && n <= 23) {
+      setModalHour(value);
+    }
+  };
+
+  const handleModalMinuteChange = (value: string) => {
+    if (value === "") return setModalMinute(value);
+    const n = Number(value);
+    if (!Number.isNaN(n) && n >= 0 && n <= 59) {
+      setModalMinute(value);
+    }
+  };
+
 
   const handleSave = async () => {
     if (!basic?.productKnowledgeId) {
@@ -87,7 +122,7 @@ export function AutoGenerateModal({
       return;
     }
 
-    if (selectedPlatforms.length === 0) {
+    if (modalSelectedPlatforms.length === 0) {
       showToast("error", t("pleaseSelectPlatform"));
       return;
     }
@@ -97,15 +132,33 @@ export function AutoGenerateModal({
       return;
     }
 
-    if (!selectedTime) {
+    if (!modalHour || !modalMinute) {
       showToast("error", t("pleaseSelectTime"));
       return;
     }
 
+    const h = parseInt(modalHour, 10);
+    const m = parseInt(modalMinute, 10);
+    if (Number.isNaN(h) || h < 0 || h > 23) {
+      showToast("error", t("hourMustBe0-23"));
+      return;
+    }
+    if (Number.isNaN(m) || m < 0 || m > 59) {
+      showToast("error", t("minuteMustBe0-59"));
+      return;
+    }
+
+    const hh = h.toString().padStart(2, "0");
+    const mm = m.toString().padStart(2, "0");
+    const timeString = `${hh}:${mm}`;
+
+    const isActiveStatus = editingSchedule ? editingSchedule.isActive : true;
+    console.log('Modal save - editingSchedule:', editingSchedule?.id, 'isActive:', isActiveStatus);
+    
     const scheduleData: CreateAutoGenerateScheduleRequest = {
       day: selectedDay,
-      time: selectedTime,
-      platforms: selectedPlatforms,
+      time: timeString,
+      platforms: modalSelectedPlatforms,
       model: basic.model || "gpt-image-1",
       designStyle: basic.designStyle || "modern",
       ratio: basic.ratio || "1:1",
@@ -113,7 +166,7 @@ export function AutoGenerateModal({
       category: basic.category || "sale",
       additionalPrompt: additionalPrompt.trim() || undefined,
       productKnowledgeId: basic.productKnowledgeId,
-      isActive: isActive,
+      isActive: isActiveStatus, // Use existing status when editing, default to true for new schedules
       advBusinessName: form.advance.businessKnowledge.name,
       advBusinessCategory: form.advance.businessKnowledge.category,
       advBusinessDescription: form.advance.businessKnowledge.description,
@@ -162,17 +215,40 @@ export function AutoGenerateModal({
       if (prevAdvanceRef.current) setAdvance(prevAdvanceRef.current);
       prevBasicRef.current = null;
       prevAdvanceRef.current = null;
-      setIsActive(true);
       setAdditionalPrompt("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  // Initialize platform selection and time when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setModalSelectedPlatforms(selectedPlatforms);
+      
+      // Parse selectedTime to hour and minute
+      if (selectedTime) {
+        const [hour, minute] = selectedTime.split(':');
+        setModalHour(hour || "");
+        setModalMinute(minute || "");
+      } else {
+        setModalHour("");
+        setModalMinute("");
+      }
+    }
+  }, [isOpen, selectedPlatforms, selectedTime]);
+
   // Prefill form when editing an existing schedule
   useEffect(() => {
     if (!isOpen) return;
     if (editingSchedule) {
-      setIsActive(!!editingSchedule.isActive);
+      setModalSelectedPlatforms(editingSchedule.platforms);
+      
+      // Parse editingSchedule.time to hour and minute
+      if (editingSchedule.time) {
+        const [hour, minute] = editingSchedule.time.split(':');
+        setModalHour(hour || "");
+        setModalMinute(minute || "");
+      }
       
       // Find the AI model that matches the schedule's model
       const scheduleModel = aiModels.models.find(model => model.name === editingSchedule.model);
@@ -238,17 +314,26 @@ export function AutoGenerateModal({
           <DialogHeader>
             <DialogTitle>{t("configureAutoGenerate")}</DialogTitle>
             <DialogDescription>
-              {selectedDay !== null && selectedTime && (
-                <>
-                  {t("schedulingFor")} {getDayName(selectedDay)} {t("at")} {selectedTime}
-                </>
+              {selectedDay !== null && (
+                <div className="flex flex-row items-center space-x-2 gap-2">
+                  {t("schedulingFor")} {getDayName(selectedDay)} {t("at")}
+                  <TimeInput
+                    hour={modalHour}
+                    minute={modalMinute}
+                    onHourChange={handleModalHourChange}
+                    onMinuteChange={handleModalMinuteChange}
+                  />
+                </div>
               )}
             </DialogDescription>
           </DialogHeader>
+          
+   
+
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Column - Reference Libary */}
-              <div className="space-y-6">
+              <div className="space-y-6 overflow-y-auto max-h-[calc(180vh-360px)]">
                 <AutoGenerateReferencePanel />
         
               </div>
@@ -259,29 +344,54 @@ export function AutoGenerateModal({
               <AutoGenerateFormBasic />
               <AutoGenerateFormAdvanced />
 
-                {/* Schedule Status */}
+                {/* Platform Selection */}
                 <Card>
                   <CardContent className="p-4">
                     <h3 className="text-lg font-semibold mb-4">
-                      {t("scheduleStatus")}
+                      {t("selectPlatforms")}
                     </h3>
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={isActive}
-                        onCheckedChange={setIsActive}
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        {isActive ? t("active") : t("inactive")}
-                      </span>
+                    <div className="flex flex-wrap gap-2">
+                      {platformData?.data.data
+                        .filter((platform) => platform.status === "connected")
+                        .map((platform, index) => {
+                          const p = platform.platform as PlatformEnum;
+                          const selected = modalSelectedPlatforms.includes(p);
+                          return (
+                            <Button
+                              key={index}
+                              variant="outline"
+                              onClick={() => togglePlatform(p)}
+                              className={cn(
+                                "flex-shrink-0",
+                                selected
+                                  ? "bg-blue-600 hover:bg-blue-700"
+                                  : "hover:bg-muted"
+                              )}
+                            >
+                              <div className="bg-background-secondary p-1 rounded-md">
+                                {mapEnumPlatform.getPlatformIcon(p)}
+                              </div>
+                              <span
+                                className={cn(
+                                  "text-xs font-medium",
+                                  selected ? "text-white" : "text-muted-foreground"
+                                )}
+                              >
+                                {mapEnumPlatform.getPlatformLabel(p)}
+                              </span>
+                            </Button>
+                          );
+                        })}
                     </div>
                   </CardContent>
                 </Card>
 
+
                 {/* Additional Prompt */}
                 <Card>
                   <CardContent className="p-4">
-                    <h3 className="text-lg font-semibold mb-4">
-                      {t("additionalPrompt")}
+                    <h3 className="text-lg font-semibold mb-4 flex gap-2 items-center">
+                    <Sparkles className="size-6" /> {t("additionalPrompt")} 
                     </h3>
                     <TextField
                       label=""
@@ -297,11 +407,30 @@ export function AutoGenerateModal({
             </div>
           </div>
 
-          <DialogFooterWithButton
-            buttonMessage={editingSchedule ? t("updateSchedule") : t("saveSchedule")}
-            onClick={handleSave}
-            disabled={isLoading || !basic?.productKnowledgeId}
-          />
+          {editingSchedule ? (
+            <DialogFooterWithTwoButtons
+              secondaryButton={{
+                message: t("updateSchedule"),
+                onClick: handleSave,
+                variant: "default",
+                icon: <Save className="h-4 w-4" />,
+                className: "bg-primary hover:bg-blue-700 px-6 text-white "
+              }}
+              primaryButton={{
+                message: t("deleteSchedule"),
+                onClick: () => onDelete?.(editingSchedule.id),
+                variant: "destructive",
+                icon: <Trash2 className="h-4 w-4" />,
+                className: "bg-red-600 hover:bg-red-700 text-white"
+              }}
+            />
+          ) : (
+            <DialogFooterWithButton
+              buttonMessage={t("saveSchedule")}
+              onClick={handleSave}
+              disabled={isLoading || !basic?.productKnowledgeId}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </>

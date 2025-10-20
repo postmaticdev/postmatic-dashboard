@@ -145,10 +145,10 @@ const DialogFooterWithTwoButtons = ({
   className,
 }: DialogFooterWithTwoButtonsProps) => (
   <DialogFooter className={className}>
-    <div className="flex gap-3">
+    <div className="flex gap-3 justify-self-end">
       <Button
         onClick={primaryButton.onClick}
-        className={`flex-1 ${primaryButton.className || ""}`}
+        className={` ${primaryButton.className || ""}`}
       >
         {primaryButton.icon}
         {primaryButton.message}

@@ -32,9 +32,13 @@ export function LanguageToggle() {
   const triggerLabel = active?.label ?? locale?.toUpperCase() ?? "ID";
   const triggerFlag = active?.flag ?? "fi fi-xx";
 
-  const changeLocale = (next: string) => {
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const changeLocale = async (next: string) => {
     if (!next || next === locale) return;
     router.replace(pathname, { locale: next });
+    await sleep(100);
+    window.location.reload();
   };
 
   return (

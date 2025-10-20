@@ -68,6 +68,7 @@ interface BasicForm extends GenerateContentBase {
   customCategory: string;
   customDesignStyle: string;
   referenceImageName: string | null;
+  referenceImagePublisher: string | null;
   caption: string;
   model: string;
 }
@@ -202,6 +203,7 @@ const initialFormBasic: BasicForm = {
   customCategory: "",
   customDesignStyle: "",
   referenceImageName: null,
+  referenceImagePublisher: null,
   caption: "",
   model: "",
 };
@@ -444,6 +446,7 @@ export function AutoGenerateProvider({
       ...formBasic,
       referenceImage: imageUrl,
       referenceImageName: imageName,
+      referenceImagePublisher: template?.publisher || null,
     });
 
     // Set selected template for visual feedback
@@ -565,13 +568,24 @@ export function AutoGenerateProvider({
   }, [businessId]);
 
   // ===== Helpers =====
-  const isChanged = useMemo(
-    () => stableSig(draftRef.current) !== stableSig(baseRef.current),
-    []
-  );
+  // Calculate isChanged dynamically
+  const isChanged = stableSig(draftRef.current) !== stableSig(baseRef.current);
+  
+  // Debug logging for isChanged calculation
+  console.log('isChanged calculation:', {
+    draftEnabled: draftRef.current.enabled,
+    baseEnabled: baseRef.current.enabled,
+    draftSig: stableSig(draftRef.current),
+    baseSig: stableSig(baseRef.current),
+    isChanged
+  });
 
   // ===== Mutators =====
   const setGlobalEnabled = useCallback((next: boolean) => {
+    console.log('setGlobalEnabled called with:', next);
+    console.log('Current draftRef.enabled:', draftRef.current.enabled);
+    console.log('Current baseRef.enabled:', baseRef.current.enabled);
+    
     draftRef.current = { 
       ...draftRef.current, 
       enabled: next,
@@ -580,6 +594,8 @@ export function AutoGenerateProvider({
         preference: { isActive: next }
       }
     };
+    
+    console.log('After update - draftRef.enabled:', draftRef.current.enabled);
     bump();
   }, []);
 
@@ -705,7 +721,16 @@ export function AutoGenerateProvider({
 
   // ===== Upsert =====
   const onUpsert = useCallback(async () => {
-    if (!isChanged) {
+    console.log('onUpsert called - isChanged:', isChanged);
+    console.log('draftRef.current.enabled:', draftRef.current.enabled);
+    console.log('baseRef.current.enabled:', baseRef.current.enabled);
+    
+    // Check if there's a change in enabled status specifically
+    const enabledChanged = draftRef.current.enabled !== baseRef.current.enabled;
+    console.log('enabledChanged:', enabledChanged);
+    
+    if (!isChanged && !enabledChanged) {
+      console.log('No changes detected, showing toast');
       showToast("info", t("toast.general.noChangesToSave"));
       return;
     }
@@ -715,11 +740,18 @@ export function AutoGenerateProvider({
 
     try {
       // Update preference first
-      if (draftRef.current.enabled !== baseRef.current.enabled) {
+      if (enabledChanged) {
+        console.log('Sending PATCH request for preference:', {
+          businessId,
+          isActive: draftRef.current.enabled,
+          from: baseRef.current.enabled,
+          to: draftRef.current.enabled
+        });
         await mUpdatePreference.mutateAsync({
           businessId,
           isActive: draftRef.current.enabled,
         });
+        console.log('PATCH request completed successfully');
       }
 
       // Handle schedule changes

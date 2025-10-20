@@ -224,6 +224,7 @@
   "autoGenerate": {
     "autoGenerate": "Auto Generate",
     "saving": "Menyimpan...",
+    "deleteSchedule": "Hapus Jadwal",
     "save": "Simpan",
     "configure": "Konfigurasi",
     "autoGenerateEnabled": "Auto generate aktif. Konten akan otomatis dibuat dan diposting sesuai jadwal Anda.",

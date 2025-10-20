@@ -670,6 +670,11 @@ const autoGenerateService = {
       { params: query }
     );
   },
+  getScheduleById: (businessId: string, scheduleId: string) => {
+    return api.get<AutoGenerateScheduleResponse>(
+      `/content/scheduler/auto-generate/${businessId}/${scheduleId}`
+    );
+  },
 };
 
 export const useContentAutoGenerateGetSettings = (businessId: string) => {
@@ -737,5 +742,13 @@ export const useContentAutoGenerateGetHistories = (businessId: string, query?: A
     queryKey: ["contentAutoGenerateGetHistories", businessId, query],
     queryFn: () => autoGenerateService.getHistories(businessId, query),
     enabled: !!businessId,
+  });
+};
+
+export const useContentAutoGenerateGetScheduleById = (businessId: string, scheduleId: string) => {
+  return useQuery({
+    queryKey: ["contentAutoGenerateGetScheduleById", businessId, scheduleId],
+    queryFn: () => autoGenerateService.getScheduleById(businessId, scheduleId),
+    enabled: !!businessId && !!scheduleId,
   });
 };
