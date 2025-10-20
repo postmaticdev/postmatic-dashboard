@@ -8,13 +8,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
-import { MoreHorizontal, Eye, Save, Heart } from "lucide-react";
+import { MoreHorizontal, Eye } from "lucide-react";
 import Image from "next/image";
 import {
   Template,
-  useContentGenerate,
-} from "@/contexts/content-generate-context";
+  useAutoGenerate,
+} from "@/contexts/auto-generate-context";
 import { useTranslations } from "next-intl";
 
 // {/* Content */}
@@ -25,14 +24,10 @@ interface TemplateCardProps {
 
 export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
   const { 
-    onSaveUnsave, 
     onSelectReferenceImage, 
     isLoading,
-    unsaveModal,
-    onConfirmUnsave,
-    onCloseUnsaveModal,
     selectedTemplate
-  } = useContentGenerate();
+  } = useAutoGenerate();
 
   const t = useTranslations("templateCard");
   
@@ -93,17 +88,6 @@ export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
                 <Eye className="mr-2 h-4 w-4" />
                 {t("detail")}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onSaveUnsave(item)}
-                className="cursor-pointer"
-              >
-                {item.type === "saved" ? (
-                  <Heart className="mr-2 h-4 w-4 fill-current text-red-500" />
-                ) : (
-                  <Save className="mr-2 h-4 w-4" />
-                )}
-                {item.type === "saved" ? t("unsave") : t("save")}
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -119,17 +103,6 @@ export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
           {isSelected ? t("selected") : t("use")}
         </Button>
       </div>
-      
-      {/* Unsave Confirmation Modal */}
-      <DeleteConfirmationModal
-        isOpen={unsaveModal.isOpen && unsaveModal.item?.id === item.id}
-        onClose={onCloseUnsaveModal}
-        onConfirm={onConfirmUnsave}
-        title={t("unsaveConfirmationTitle")}
-        description={t("unsaveConfirmationDescription")}
-        itemName={unsaveModal.item?.name || ""}
-        isLoading={unsaveModal.isLoading}
-      />
     </Card>
   );
 };

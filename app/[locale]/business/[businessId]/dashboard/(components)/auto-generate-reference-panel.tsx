@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/pagination";
 import {
   Template,
-  useContentGenerate,
-} from "@/contexts/content-generate-context";
+  useAutoGenerate,
+} from "@/contexts/auto-generate-context";
 
 import { helperService } from "@/services/helper.api";
 import { showToast } from "@/helper/show-toast";
@@ -39,7 +39,7 @@ export function AutoGenerateReferencePanel() {
     null
   );
 
-  const { publishedTemplates, savedTemplates, form } = useContentGenerate();
+  const { publishedTemplates, savedTemplates, form } = useAutoGenerate();
   const { data: productCategoriesData } = useLibraryTemplateGetProductCategory();
 
   const handleDrag = useCallback((e: React.DragEvent) => {

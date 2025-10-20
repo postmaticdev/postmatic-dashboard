@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useContentGenerate } from "@/contexts/content-generate-context";
+import { useAutoGenerate } from "@/contexts/auto-generate-context";
 import { ChevronDown as ChevronDownIcon } from "lucide-react";
 import { AutoProductSelectionModal } from "./auto-product-selection-modal";
 import { useState } from "react";
@@ -11,9 +11,9 @@ import { useTranslations } from "next-intl";
 
 export const AutoGenerateFormBasic = () => {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  const { form, isLoading, selectedHistory, aiModels, onSelectAiModel } = useContentGenerate();
+  const { form, isLoading, aiModels, onSelectAiModel } = useAutoGenerate();
   const { basic, setBasic } = form;
-  const disabled = selectedHistory !== null;
+  const disabled = false; // Auto generate doesn't have selectedHistory
   const t = useTranslations("generationPanel");
 
   const CATEGORY_OPTIONS = [
@@ -198,6 +198,12 @@ export const AutoGenerateFormBasic = () => {
               {option}
             </option>
           ))}
+          {/* Show current ratio if it's not in validRatios (for editing existing schedules) */}
+          {basic?.ratio && !aiModels.validRatios.includes(basic.ratio) && (
+            <option key={basic.ratio} value={basic.ratio}>
+              {basic.ratio}
+            </option>
+          )}
         </select>
       </div>
 

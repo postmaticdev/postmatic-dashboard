@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Check } from "lucide-react";
 import Image from "next/image";
-import { useContentGenerate } from "@/contexts/content-generate-context";
+import { useAutoGenerate } from "@/contexts/auto-generate-context";
 import { DEFAULT_PRODUCT_IMAGE } from "@/constants";
 import { ProductKnowledgeRes } from "@/models/api/knowledge/product.type";
 import { formatPriceWithCurrency } from "@/helper/price-formatter";
@@ -31,7 +31,7 @@ export function AutoProductSelectionModal({
   const [tempSelected, setTempSelected] = useState<ProductKnowledgeRes | null>(
     null
   );
-  const { productKnowledges, onSelectProduct } = useContentGenerate();
+  const { productKnowledges, onSelectProduct } = useAutoGenerate();
 
   const handleSelectProduct = () => {
     onSelectProduct(tempSelected);

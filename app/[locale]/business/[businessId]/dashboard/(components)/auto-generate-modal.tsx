@@ -16,13 +16,14 @@ import { useTranslations } from "next-intl";
 import { AutoGenerateReferencePanel } from "./auto-generate-reference-panel";
 import { CreateAutoGenerateScheduleRequest, AutoGenerateSchedule } from "@/models/api/content/auto-generate";
 import { showToast } from "@/helper/show-toast";
-import { useContentGenerate } from "@/contexts/content-generate-context";
+import { useAutoGenerate } from "@/contexts/auto-generate-context";
 import type { ValidRatio } from "@/models/api/content/image.type";
 import { useContentAutoGenerateCreateSchedule, useContentAutoGenerateUpdateSchedule } from "@/services/content/content.api";
 import { useParams } from "next/navigation";
 import { AutoGenerateFormBasic } from "./auto-generate-form-basic";
 import { AutoGenerateFormAdvanced } from "./auto-generate-form-advance";
 import { AutoSelectedReferenceImage } from "./auto-selected-reference-image";
+import { TextField } from "@/components/forms/text-field";
 
 interface AutoGenerateModalProps {
   isOpen: boolean;
@@ -50,12 +51,19 @@ export function AutoGenerateModal({
 
   // Form state
   const [isActive, setIsActive] = useState<boolean>(true);
+  const [additionalPrompt, setAdditionalPrompt] = useState<string>("");
   const prevBasicRef = useRef<typeof basic | null>(null);
   const prevAdvanceRef = useRef<typeof advance | null>(null);
 
-  // Content Generate Context
-  const { form, isLoading } = useContentGenerate();
+  // Auto Generate Context
+  const { form, isLoading, productKnowledges, aiModels, onSelectAiModel } = useAutoGenerate();
   const { basic, setBasic, advance, setAdvance } = form;
+
+  // Helper function to get product name from productKnowledgeId
+  const getProductNameById = (productKnowledgeId: string) => {
+    const product = productKnowledges.contents.find(p => p.id === productKnowledgeId);
+    return product?.name || "";
+  };
 
   const DAYS = [
     { value: 0, label: t("sunday") },
@@ -103,7 +111,7 @@ export function AutoGenerateModal({
       ratio: basic.ratio || "1:1",
       referenceImages: basic.referenceImage ? [basic.referenceImage] : [],
       category: basic.category || "sale",
-      additionalPrompt: basic.prompt || undefined,
+      additionalPrompt: additionalPrompt.trim() || undefined,
       productKnowledgeId: basic.productKnowledgeId,
       isActive: isActive,
       advBusinessName: form.advance.businessKnowledge.name,
@@ -155,6 +163,7 @@ export function AutoGenerateModal({
       prevBasicRef.current = null;
       prevAdvanceRef.current = null;
       setIsActive(true);
+      setAdditionalPrompt("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -164,6 +173,10 @@ export function AutoGenerateModal({
     if (!isOpen) return;
     if (editingSchedule) {
       setIsActive(!!editingSchedule.isActive);
+      
+      // Find the AI model that matches the schedule's model
+      const scheduleModel = aiModels.models.find(model => model.name === editingSchedule.model);
+      
       setBasic({
         ...basic,
         model: editingSchedule.model,
@@ -176,8 +189,13 @@ export function AutoGenerateModal({
           editingSchedule.referenceImages && editingSchedule.referenceImages.length > 0
             ? editingSchedule.referenceImages[0]
             : null,
-        productName: basic.productName, // keep existing if context knows it
+        productName: getProductNameById(editingSchedule.productKnowledgeId),
       });
+
+      // Set the selected AI model to match the schedule's model
+      if (scheduleModel) {
+        onSelectAiModel(scheduleModel);
+      }
 
       // Prefill advance toggles from schedule flags
       setAdvance({
@@ -206,6 +224,9 @@ export function AutoGenerateModal({
           hashtags: !!editingSchedule.advRoleHashtags,
         },
       });
+
+      // Set additional prompt
+      setAdditionalPrompt(editingSchedule.additionalPrompt || "");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, editingSchedule]);
@@ -253,6 +274,23 @@ export function AutoGenerateModal({
                         {isActive ? t("active") : t("inactive")}
                       </span>
                     </div>
+                  </CardContent>
+                </Card>
+
+                {/* Additional Prompt */}
+                <Card>
+                  <CardContent className="p-4">
+                    <h3 className="text-lg font-semibold mb-4">
+                      {t("additionalPrompt")}
+                    </h3>
+                    <TextField
+                      label=""
+                      value={additionalPrompt}
+                      onChange={setAdditionalPrompt}
+                      placeholder={t("additionalPromptPlaceholder")}
+                      multiline={true}
+                      rows={3}
+                    />
                   </CardContent>
                 </Card>
               </div>

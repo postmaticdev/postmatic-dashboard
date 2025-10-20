@@ -16,6 +16,7 @@ import { Locale, routing } from "@/i18n/routing";
 import { redirect } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { AutoGenerateProvider } from "@/contexts/auto-generate-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,7 @@ export default async function RootLayout({
             <Suspense fallback={null}>
               <QueryProvider>
                 <RoleProvider>
+                <AutoGenerateProvider>
                   <AutoSchedulerAutosaveProvider>
                     <ContentGenerateProvider>
                       <FormNewBusinessProvider>
@@ -72,6 +74,7 @@ export default async function RootLayout({
                       </FormNewBusinessProvider>
                     </ContentGenerateProvider>
                   </AutoSchedulerAutosaveProvider>
+                </AutoGenerateProvider>
                 </RoleProvider>
                 <Toaster />
               </QueryProvider>

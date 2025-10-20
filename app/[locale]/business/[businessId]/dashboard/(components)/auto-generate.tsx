@@ -36,7 +36,7 @@ export function AutoGenerate({
     enabled: globalEnabled,
     setGlobalEnabled,
     getSchedulesByDay,
-    removeSchedule,
+    deleteScheduleDirectly,
   } = useAutoGenerate();
 
   const { businessId } = useParams() as { businessId: string };
@@ -117,8 +117,7 @@ export function AutoGenerate({
   const handleDeleteSchedule = async (scheduleId: string) => {
     if (window.confirm(t("confirmDeleteSchedule"))) {
       try {
-        removeSchedule(scheduleId);
-        showToast("success", t("scheduleDeletedSuccessfully"));
+        await deleteScheduleDirectly(scheduleId);
       } catch {
         showToast("error", t("scheduleDeleteFailed"));
       }

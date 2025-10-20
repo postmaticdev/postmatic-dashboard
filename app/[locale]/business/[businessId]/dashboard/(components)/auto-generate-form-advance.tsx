@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { SyntheticEvent, MouseEvent, KeyboardEvent } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronDown, ChevronRight, RefreshCcw } from "lucide-react";
-import { useContentGenerate } from "@/contexts/content-generate-context";
+import { useAutoGenerate } from "@/contexts/auto-generate-context";
 import { GenerateContentAdvanceBase } from "@/models/api/content/image.type";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
@@ -19,7 +19,7 @@ export const AutoGenerateFormAdvanced = () => {
     useState(false);
   const [roleKnowledgeExpanded, setRoleKnowledgeExpanded] = useState(false);
 
-  const { form, isLoading, onResetAdvance } = useContentGenerate();
+  const { form, isLoading, onResetAdvance } = useAutoGenerate();
   const { advance, setAdvance, enabledAdvance } = form;
   const { businessKnowledge, productKnowledge, roleKnowledge } = advance;
   const t = useTranslations("generationPanel");

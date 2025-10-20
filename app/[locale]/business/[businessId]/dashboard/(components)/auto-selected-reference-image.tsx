@@ -1,20 +1,14 @@
-import { useContentGenerate } from "@/contexts/content-generate-context";
+import { useAutoGenerate } from "@/contexts/auto-generate-context";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
 export const AutoSelectedReferenceImage = () => {
-  const { form, selectedHistory, isLoading, setSelectedTemplate } = useContentGenerate();
+  const { form, isLoading, setSelectedTemplate } = useAutoGenerate();
   const t = useTranslations("generationPanel");
-  const imageHistory =
-    selectedHistory?.result?.images[0] ||
-    selectedHistory?.input?.referenceImage;
 
-  if (
-    !form?.basic?.referenceImage ||
-    form.basic.referenceImage === imageHistory
-  )
+  if (!form?.basic?.referenceImage)
     return null;
   return (
     <Card className="p-4" id="selected-reference-image">

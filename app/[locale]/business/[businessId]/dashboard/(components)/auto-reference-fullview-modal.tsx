@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Plus, Heart, Save } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +13,8 @@ import {
 import { Card, CardContent } from "../../../../../../components/ui/card";
 import {
   Template,
-  useContentGenerate,
-} from "@/contexts/content-generate-context";
+  useAutoGenerate,
+} from "@/contexts/auto-generate-context";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { formatIdr } from "@/helper/formatter";
 import { useTranslations } from "next-intl";
@@ -32,7 +32,7 @@ export function AutoReferenceFullviewModal({
   onClose,
   template,
 }: ReferenceFullviewModalProps) {
-  const { onSaveUnsave, onSelectReferenceImage } = useContentGenerate();
+  const { onSelectReferenceImage } = useAutoGenerate();
   const m = useTranslations("modal");
   const { formatDate } = useDateFormat();
   if (!template) return null;
@@ -169,19 +169,10 @@ export function AutoReferenceFullviewModal({
               "bg-gradient-to-r text-white from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700  shadow-sm font-medium",
           }}
           secondaryButton={{
-            message: isSaved ? m("buttonSaved") : m("buttonUnsaved"),
-            onClick: () => onSaveUnsave(template),
-            icon: isSaved ? (
-              <Heart className="mr-2 h-4 w-4 fill-current" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            ),
+            message: m("buttonClose"),
+            onClick: onClose,
             variant: "outline",
-            className: `px-6 border-2 font-medium transition-all ${
-              isSaved
-                ? "border-red-200 text-red-600 hover:bg-red-50"
-                : "border-gray-200 hover:bg-gray-50"
-            }`,
+            className: "px-6 border-2 font-medium transition-all border-gray-200 hover:bg-gray-50",
           }}
         />
       </DialogContent>
