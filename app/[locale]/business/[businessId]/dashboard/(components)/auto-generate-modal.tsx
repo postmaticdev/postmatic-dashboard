@@ -35,7 +35,7 @@ interface AutoGenerateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: () => void;
-  onDelete?: (scheduleId: string) => void;
+  onDelete?: (schedule: AutoGenerateSchedule) => void;
   selectedDay: number | null;
   selectedTime: string;
   selectedPlatforms: PlatformEnum[];
@@ -310,7 +310,10 @@ export function AutoGenerateModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-5xl">
+        <DialogContent 
+          className="max-w-5xl"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>{t("configureAutoGenerate")}</DialogTitle>
             <DialogDescription>
@@ -330,16 +333,16 @@ export function AutoGenerateModal({
           
    
 
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="flex-1 overflow-y-auto  space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 ">
               {/* Left Column - Reference Libary */}
-              <div className="space-y-6 overflow-y-auto max-h-[calc(180vh-360px)]">
+              <div className="space-y-6 md:overflow-y-auto max-h-full md:max-h-[calc(180vh-360px)]">
                 <AutoGenerateReferencePanel />
         
               </div>
 
               {/* Right Column - Form and Status */}
-              <div className="space-y-6">
+              <div className="space-y-6 p-4 sm:p-6">
                 <AutoSelectedReferenceImage/>
               <AutoGenerateFormBasic />
               <AutoGenerateFormAdvanced />
@@ -418,7 +421,7 @@ export function AutoGenerateModal({
               }}
               primaryButton={{
                 message: t("deleteSchedule"),
-                onClick: () => onDelete?.(editingSchedule.id),
+                onClick: () => editingSchedule && onDelete?.(editingSchedule),
                 variant: "destructive",
                 icon: <Trash2 className="h-4 w-4" />,
                 className: "bg-red-600 hover:bg-red-700 text-white"

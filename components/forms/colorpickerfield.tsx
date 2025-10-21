@@ -1,10 +1,12 @@
 // components/ColorPickerField.tsx
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Info } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ColorPickerFieldProps {
   label: string;
@@ -34,9 +36,18 @@ export function ColorPickerField({
   error,
   onFocus,
 }: ColorPickerFieldProps) {
-  // TIDAK ada state lokal dan TIDAK ada useEffect.
   const colorHash = useMemo(() => toHashHex(value), [value]);
   const preview = colorHash;
+  
+  // Local state untuk input hex
+  const [hexInput, setHexInput] = useState(stripHash(preview));
+
+  // Sync hexInput dengan value prop (ketika color picker digunakan)
+  useEffect(() => {
+    setHexInput(stripHash(preview));
+  }, [preview]);
+
+  const  t  = useTranslations("colorPicker");
 
   return (
     <div className="space-y-2">
@@ -54,16 +65,35 @@ export function ColorPickerField({
           }}
         />
 
-        <div className="flex flex-col items-start gap-2 pt-1">
+        <div className="flex flex-col items-start gap-2">
+          <Label className="text-sm font-medium text-foreground">{t("previewColor")}</Label>
           <div
-            className="border-2 border-border rounded-md w-20 h-10"
+            className="border-2 border-border rounded-md w-25 h-15"
             style={{ backgroundColor: preview }}
             aria-label={`preview ${preview}`}
             title={preview}
           />
-          <code className="text-xs text-muted-foreground">
-            {stripHash(preview)}
-          </code>
+          <Label className="text-sm font-medium text-foreground">{t("setHex")}</Label>
+          <Input
+            type="text"
+            value={hexInput}
+            onChange={(e) => {
+              const inputValue = e.target.value.toUpperCase().replace(/[^0-9A-F]/g, "");
+              setHexInput(inputValue);
+              
+              // Validasi: harus 3, 6, atau 8 karakter
+              if (inputValue.length === 3 || inputValue.length === 6 || inputValue.length === 8) {
+                onChange(inputValue);
+              }
+            }}
+            onBlur={() => {
+              // Sinkronisasi dengan value saat blur
+              setHexInput(stripHash(preview));
+            }}
+            placeholder="FFFFFF"
+            maxLength={6}
+            className="w-24 text-xs text-center font-mono"
+          />
         </div>
       </div>
 

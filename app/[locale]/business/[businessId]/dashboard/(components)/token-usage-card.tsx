@@ -2,7 +2,7 @@ import { Progress } from "@/components/ui/progress";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { useSubscribtionGetSubscription } from "@/services/tier/subscribtion.api";
 import { useTokenGetTokenUsage } from "@/services/tier/token.api";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 
 export function TokenUsageCard() {
@@ -26,6 +26,8 @@ export function TokenUsageCard() {
     100
   );
 
+  const locale = useLocale();
+
   return (
     <div className="bg-card rounded-lg p-6 shadow-sm border border-border flex flex-col gap-2">
       <div className="flex flex-col mb-4">
@@ -41,17 +43,17 @@ export function TokenUsageCard() {
       </div>
 
       <div className="text-3xl font-bold text-foreground mb-4">
-        {usedValue} / {limitToken}
+        {usedValue.toLocaleString(locale)} / {limitToken.toLocaleString(locale)}
       </div>
       <Progress value={percentage} />
 
       <div className="flex mt-2 justify-between flex-row text-sm">
         <span className="text-muted-foreground">
-          {usedValue} {t("usedValue")} ({percentage}%)
+          {usedValue.toLocaleString(locale)} {t("usedValue")} ({percentage.toFixed(2)}%)
         </span>
 
         <span className="text-muted-foreground">
-          {availableValue} {t("availableValue")}
+          {availableValue.toLocaleString(locale)} {t("availableValue")}
         </span>
       </div>
     </div>

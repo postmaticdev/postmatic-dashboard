@@ -207,7 +207,7 @@ export function SchedulePost({ onDashboard = false }: SchedulePostProps) {
   };
 
   return (
-    <Card className={onDashboard ? "h-fit" : "h-full"}>
+    <Card className="h-full">
       <CardContent className="p-6">
         <div className="space-y-6">
           <div className="flex flex-col justify-between">
@@ -226,11 +226,13 @@ export function SchedulePost({ onDashboard = false }: SchedulePostProps) {
           {isLoadingUpcoming ? (
             <UpcomingPostsSkeleton />
           ) : upcomings.length === 0 ? (
+            <div className="justify-center">
             <NoContent
               icon={ClipboardClock}
               title={t("noContent")}
               titleDescription={t("noContentDescription")}
-            />
+              />
+              </div>
           ) : (
             <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
               {upcomings.map((post, index) => (

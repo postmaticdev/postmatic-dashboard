@@ -21,6 +21,8 @@ import { useContentGenerate } from "@/contexts/content-generate-context";
 import { showToast } from "@/helper/show-toast";
 import { helperService } from "@/services/helper.api";
 import { useTranslations } from "next-intl";
+import { ValidRatio } from "@/models/api/content/image.type";
+import { cn } from "@/lib/utils";
 
 interface FullscreenImageModalProps {
   isOpen: boolean;
@@ -45,11 +47,27 @@ export function FullscreenImageModal({
   onClose,
 }: FullscreenImageModalProps) {
   const { theme } = useTheme();
-  const { selectedHistory, onSubmitGenerate, form, isLoading, setIsLoading } =
+  const { selectedHistory, onSubmitGenerate, form, isLoading, setIsLoading, aiModels, onSelectAiModel } =
     useContentGenerate();
   const t = useTranslations();
 
   const m = useTranslations("modal");
+
+  // Force GPT Image 1 model when modal opens (mask feature only supports this model)
+  useEffect(() => {
+    if (isOpen && aiModels.models.length > 0) {
+      const gptModel = aiModels.models.find(model => model.name === "gpt-image-1");
+      if (gptModel && form.basic.model !== "gpt-image-1") {
+        onSelectAiModel(gptModel);
+        
+        // Ensure ratio is valid for GPT Image 1
+        const validRatiosForGPT = ["1:1", "2:3", "3:2"];
+        if (!validRatiosForGPT.includes(form.basic.ratio)) {
+          form.setBasic({ ...form.basic, ratio: "1:1" as ValidRatio, model: "gpt-image-1" });
+        }
+      }
+    }
+  }, [isOpen, aiModels.models, form.basic.model, form.basic.ratio, onSelectAiModel, form]);
 
   // Extract the first image URL for stable reference
   const firstImageUrl = selectedHistory?.result?.images?.[0];
@@ -1273,29 +1291,76 @@ export function FullscreenImageModal({
 
       {/* Footer input */}
       <div className="p-4 bg-background/80 backdrop-blur-sm border-t border-border">
-        <div className="max-w-2xl mx-auto relative flex flex-row gap-2 items-center">
-          <Textarea
-            value={form?.basic?.prompt || ""}
-            onChange={(e) =>
-              form.setBasic({ ...form.basic, prompt: e.target.value })
-            }
-            onKeyPress={handleKeyPress}
-            className=""
-            placeholder={m("addCommentOrInstruction")}
-            aria-label="Comment input"
-          />
-          <Button
-            className="h-16 w-16 p-0 bg-blue-500 hover:bg-blue-600 touch-manipulation"
-            onClick={handleSend}
-            disabled={!(form?.basic?.prompt?.trim() || "") || isLoading}
-            aria-label="Send comment"
-          >
-            {isLoading ? (
-              <Loader2 className="h-8 w-8 animate-spin" />
-            ) : (
-              <Send className="h-8 w-8" />
-            )}
-          </Button>
+        <div className="max-w-2xl mx-auto space-y-3">
+          {/* AI Model and Ratio Dropdowns */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* AI Model */}
+            <div>
+              <label className="block text-xs font-medium mb-1.5">AI Model</label>
+              <select
+                className={cn(
+                  "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring cursor-not-allowed opacity-60",
+                  isLoading
+                )}
+                disabled={true}
+                value="gpt-image-1"
+              >
+                <option value="gpt-image-1">GPT Image 1</option>
+              </select>
+              <p className="text-xs text-muted-foreground mt-1">
+                Saat ini fitur mask hanya ada di model GPT Image 1
+              </p>
+            </div>
+
+            {/* Aspect Ratio */}
+            <div>
+              <label className="block text-xs font-medium mb-1.5">{t("generationPanel.aspectRatio")}</label>
+              <select
+                className={cn(
+                  "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
+                  isLoading
+                )}
+                disabled={isLoading}
+                value={form?.basic?.ratio || ""}
+                onChange={(e) => {
+                  form.setBasic({ ...form.basic, ratio: e.target.value as ValidRatio });
+                }}
+              >
+                {/* Only show valid ratios for GPT Image 1 */}
+                {["1:1", "2:3", "3:2"].map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Prompt and Send Button */}
+          <div className="relative flex flex-row gap-2 items-center">
+            <Textarea
+              value={form?.basic?.prompt || ""}
+              onChange={(e) =>
+                form.setBasic({ ...form.basic, prompt: e.target.value })
+              }
+              onKeyPress={handleKeyPress}
+              className=""
+              placeholder={m("addCommentOrInstruction")}
+              aria-label="Comment input"
+            />
+            <Button
+              className="h-16 w-16 p-0 bg-blue-500 hover:bg-blue-600 touch-manipulation"
+              onClick={handleSend}
+              disabled={!(form?.basic?.prompt?.trim() || "") || isLoading}
+              aria-label="Send comment"
+            >
+              {isLoading ? (
+                <Loader2 className="h-8 w-8 animate-spin" />
+              ) : (
+                <Send className="h-8 w-8" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

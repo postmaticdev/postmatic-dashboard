@@ -156,13 +156,12 @@ export const GenerateFormBasic = () => {
         <select
           className={cn(
             "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
-            isLoading ||
-              (disabled && "opacity-50 cursor-not-allowed hover:bg-transparent")
+            isLoading 
           )}
-          disabled={isLoading || disabled || aiModels.isLoading}
+          disabled={isLoading || aiModels.isLoading}
           value={basic?.model || ""}
           onChange={(e) => {
-            if (disabled) return;
+            
             const selectedModel = aiModels.models.find(model => model.name === e.target.value);
             if (selectedModel) {
               onSelectAiModel(selectedModel);
@@ -183,13 +182,12 @@ export const GenerateFormBasic = () => {
         <select
           className={cn(
             "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
-            isLoading ||
-              (disabled && "opacity-50 cursor-not-allowed hover:bg-transparent")
+            isLoading
           )}
-          disabled={isLoading || disabled}
+          disabled={isLoading}
           value={basic?.ratio || ""}
           onChange={(e) => {
-            if (disabled) return;
+            
             setBasic({ ...basic, ratio: e.target.value as ValidRatio });
           }}
         >
@@ -206,15 +204,14 @@ export const GenerateFormBasic = () => {
         <label className="block text-sm font-medium mb-2">{t("category")}</label>
         <select
           value={basic?.category}
-          disabled={isLoading || disabled}
+          disabled={isLoading }
           onChange={(e) => {
-            if (disabled) return;
+            
             setBasic({ ...basic, category: e.target.value });
           }}
           className={cn(
             "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
-            isLoading ||
-              (disabled && "opacity-50 cursor-not-allowed hover:bg-transparent")
+            isLoading 
           )}
         >
           {CATEGORY_OPTIONS.map((option) => (
@@ -228,16 +225,14 @@ export const GenerateFormBasic = () => {
           <input
             type="text"
             value={basic.customCategory}
-            disabled={isLoading || disabled}
+            disabled={isLoading}
             onChange={(e) =>
               setBasic({ ...basic, customCategory: e.target.value })
             }
             placeholder={t("enterCustomCategory")}
             className={cn(
               "w-full p-2 mt-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
-              isLoading ||
-                (disabled &&
-                  "opacity-50 cursor-not-allowed hover:bg-transparent")
+              isLoading 
             )}
           />
         )}
@@ -249,11 +244,10 @@ export const GenerateFormBasic = () => {
         <select
           value={basic.designStyle || ""}
           onChange={(e) => setBasic({ ...basic, designStyle: e.target.value })}
-          disabled={isLoading || disabled}
+          disabled={isLoading}
           className={cn(
             "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
-            isLoading ||
-              (disabled && "opacity-50 cursor-not-allowed hover:bg-transparent")
+            isLoading
           )}
         >
           {DESIGN_STYLE_OPTIONS.map((option) => (
@@ -268,16 +262,14 @@ export const GenerateFormBasic = () => {
           <input
             type="text"
             value={basic.customDesignStyle}
-            disabled={isLoading || disabled}
+            disabled={isLoading}
             onChange={(e) =>
               setBasic({ ...basic, customDesignStyle: e.target.value })
             }
             placeholder={t("enterCustomDesignStyle")}
             className={cn(
               "w-full p-2 mt-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
-              isLoading ||
-                (disabled &&
-                  "opacity-50 cursor-not-allowed hover:bg-transparent")
+              isLoading 
             )}
           />
         )}

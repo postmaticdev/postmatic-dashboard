@@ -221,7 +221,15 @@
     "selectedTimes": "Selected Times",
     "platform": "Platform"
   },
+  "colorPicker": {
+    "setHex": "Set Hex",
+    "previewColor": "Preview Color"
+  },
   "autoGenerate": {
+    "scheduleToggleFailed": "Failed to toggle schedule",
+    "scheduleActivated": "Schedule activated successfully",
+    "scheduleDeactivated": "Schedule deactivated successfully",
+    "history": "History",
     "autoGenerate": "Auto Generate",
     "deleteSchedule": "Delete Schedule",
     "saving": "Saving...",
@@ -256,8 +264,11 @@
     "thursday": "Thursday",
     "friday": "Friday",
     "saturday": "Saturday",
-    "addSchedule": "Add Schedule",
+    "addScheduleShort": "Add",
+    "addScheduleFull": "Add Schedule",
     "confirmDeleteSchedule": "Are you sure you want to delete this schedule?",
+    "deleteScheduleTitle": "Delete Schedule",
+    "deleteScheduleDescription": "This action cannot be undone. This will permanently delete the schedule from your auto-generate settings.",
     "scheduleDeletedSuccessfully": "Schedule deleted successfully",
     "scheduleDeleteFailed": "Failed to delete schedule",
     "scheduleUpdatedSuccessfully": "Schedule updated successfully",
@@ -631,7 +642,11 @@
     "delete": "Delete",
     "close": "Close",
     "itemDeleted": "Item deleted successfully",
-    "errorGenerateContent": "Error generating content, please try again"
+    "errorGenerateContent": "Error generating content, please try again",
+    "autoGenerateHistoryTitle": "Auto Generate History",
+    "autoGenerateHistoryDescription": "View your auto-generate content history",
+    "noHistoryFound": "No history found",
+    "postedTo": "Posted to"
   },
   "businessKnowledge": {
     "notAvailable": "Not Available",

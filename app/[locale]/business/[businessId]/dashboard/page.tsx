@@ -132,18 +132,18 @@ function DashboardInner() {
       <h1 className="text-xl font-bold text-foreground mb-2">
         {d("tokenUsageAnalysis")}
       </h1>
-      <div className="w-full flex flex-col md:flex-row gap-6">
+      <div className="w-full flex flex-col md:flex-row gap-6 mb-6">
         <div className="w-full md:w-2/3">
           <TokenUsageAnalytics />
         </div>
-        <div className="w-full md:w-1/3 -mt-6 md:mt-0">
+        <div className="w-full md:w-1/3 ">
           <SchedulePost onDashboard={true} />
         </div>
       </div>
 
       {/* Auto Generate Section */}
       
-      <div className="mt-4 sm:mt-0 w-full">
+      <div className=" w-full">
         <AutoGenerate handleIfNoPlatformConnected={handleIfNoPlatformConnected} />
       </div>
 

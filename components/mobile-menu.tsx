@@ -36,7 +36,7 @@ import {
 } from "@/constants";
 import { useBusinessGetAll } from "@/services/business.api";
 import { showToast } from "@/helper/show-toast";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useTokenGetTokenUsage } from "@/services/tier/token.api";
 import { useSubscribtionGetSubscription } from "@/services/tier/subscribtion.api";
 import { useDateFormat } from "@/hooks/use-date-format";
@@ -100,6 +100,7 @@ export function MobileMenu() {
   // Get token usage data
   const { data: tokenUsageData } = useTokenGetTokenUsage(businessId ?? "");
   const credits = tokenUsageData?.data?.data?.availableToken ?? 0;
+  const locale = useLocale();
   // Handle escape key to close menu
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -278,7 +279,7 @@ export function MobileMenu() {
                          </span>
                        )}
                        <div className="flex items-center gap-2">
-                         <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{credits}</span>
+                         <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{credits.toLocaleString(locale)}</span>
                          <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
                          <span className="text-xs text-muted-foreground">{tSideBar("token")}</span>
                        </div>

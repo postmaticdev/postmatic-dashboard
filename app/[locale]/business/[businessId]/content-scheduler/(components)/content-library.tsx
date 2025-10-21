@@ -368,15 +368,17 @@ export function ContentLibrary({
         return filteredPostedContent.map((content) => (
           <div
             key={content?.id}
-            className="relative group border border-border bg-card  shadow-sm p-3 rounded-lg"
+            className="relative group border border-border bg-card  shadow-sm p-4 rounded-lg group transition-all duration-300 hover:scale-105 cursor-pointer"
           >
-            <div className="aspect-square bg-gradient-to-br from-yellow-400 via-orange-400 to-yellow-500 rounded-lg overflow-hidden">
+            <div className="aspect-square  rounded-lg overflow-hidden">
               {/* Template content placeholder */}
               <div className="relative h-full w-full">
                 <Image
                   src={content?.images[0] || DEFAULT_PLACEHOLDER_IMAGE}
                   alt="image content"
-                  className="w-full h-full object-cover"
+                  className="object-cover  select-none pointer-events-none
+             transform-gpu transition-transform duration-500 ease-out will-change-transform
+             group-hover:scale-110"
                   width={500}
                   height={500}
                 />

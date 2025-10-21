@@ -359,6 +359,7 @@ export const usePlatformKnowledgeDisconnect = () => {
       queryClient.invalidateQueries({
         queryKey: ["platformKnowledge"],
       });
+      queryClient.invalidateQueries({ queryKey: ["contentAutoGenerateGetSettings"] });
     },
   });
 };

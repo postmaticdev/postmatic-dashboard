@@ -21,6 +21,7 @@ import { useTokenGetTokenUsage } from "@/services/tier/token.api";
 import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { LanguageToggle } from "../language-toggle";
+import { useLocale } from "next-intl";
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
@@ -123,6 +124,8 @@ export function Header() {
     searchParams,
   ]);
 
+  const locale = useLocale();
+
   return (
     <header className="flex items-center justify-between w-full px-4 sm:px-6 py-4 bg-card border-b border-border fixed top-0 left-0 right-0 z-50">
       {/* Logo Section */}
@@ -184,7 +187,7 @@ export function Header() {
           <div className="hidden md:flex items-center gap-2">
             <div className="flex flex-col items-end">
               <div className="flex items-center gap-1">
-                <span className="text-sm font-bold">{credits}</span>
+                <span className="text-sm font-bold">{credits.toLocaleString(locale)}</span>
                 <Zap className="w-4 h-4 text-blue-500" strokeWidth={1.5} />
               </div>
             </div>

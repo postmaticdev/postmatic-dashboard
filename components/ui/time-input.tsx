@@ -27,6 +27,7 @@ export function TimeInput({
         className="w-16 text-center"
         min="0"
         max="23"
+        autoFocus={false}
       />
       <span className="text-muted-foreground">:</span>
       <Input
@@ -37,6 +38,7 @@ export function TimeInput({
         className="w-16 text-center"
         min="0"
         max="59"
+        autoFocus={false}
       />
     </div>
   );

@@ -354,6 +354,15 @@ export const ContentGenerateProvider = ({
   const onSelectHistory = useCallback((item: JobData | null) => {
     if (item) {
       setMode("regenerate");
+      
+      // Find and set the AI model from history
+      const modelFromHistory = aiModelsRes?.data?.data?.find(
+        model => model.name === item?.input?.model
+      );
+      if (modelFromHistory) {
+        setSelectedAiModel(modelFromHistory);
+      }
+      
       setFormBasic((prev) => ({
         ...prev,
         prompt: "",
@@ -384,7 +393,7 @@ export const ContentGenerateProvider = ({
     }
     setFormRss(null);
     setIsDraftSaved(false); // Reset draft saved state when selecting new history
-  }, []);
+  }, [aiModelsRes]);
 
   /**
    *
@@ -949,7 +958,7 @@ export const ContentGenerateProvider = ({
               referenceImage: selectedHistory.result?.images[0],
               caption: form.basic.caption || "",
               prompt: form.basic.prompt || "",
-              ratio: selectedHistory.input.ratio,
+              ratio: form.basic.ratio,
               model: form.basic.model,
             },
           });
@@ -978,7 +987,7 @@ export const ContentGenerateProvider = ({
               referenceImage: selectedHistory?.result?.images[0] || "",
               caption:
                 form.basic.caption || selectedHistory?.result?.caption || "",
-              ratio: selectedHistory?.input.ratio || "",
+              ratio: form.basic.ratio,
               designStyle:
                 (form.basic.designStyle === "other"
                   ? form.basic.customDesignStyle

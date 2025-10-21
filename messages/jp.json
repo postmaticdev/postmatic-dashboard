@@ -273,6 +273,8 @@
     "saturday": "土曜日",
     "addSchedule": "スケジュールを追加",
     "confirmDeleteSchedule": "このスケジュールを削除してもよろしいですか？",
+    "deleteScheduleTitle": "スケジュールを削除",
+    "deleteScheduleDescription": "この操作は取り消すことができません。自動生成設定からスケジュールを完全に削除します。",
     "scheduleDeletedSuccessfully": "スケジュールが正常に削除されました",
     "scheduleDeleteFailed": "スケジュールの削除に失敗しました",
     "scheduleUpdatedSuccessfully": "スケジュールが正常に更新されました",
@@ -632,7 +634,11 @@
     "delete": "削除",
     "close": "閉じる",
     "itemDeleted": "アイテムを削除しました",
-    "errorGenerateContent": "コンテンツ生成に失敗しました。もう一度お試しください"
+    "errorGenerateContent": "コンテンツ生成に失敗しました。もう一度お試しください",
+    "autoGenerateHistoryTitle": "自動生成履歴",
+    "autoGenerateHistoryDescription": "自動生成コンテンツの履歴を表示",
+    "noHistoryFound": "履歴が見つかりません",
+    "postedTo": "投稿先"
   },
   "businessKnowledge": {
     "notAvailable": "利用不可",

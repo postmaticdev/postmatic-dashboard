@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { LogoLoader } from "@/components/base/logo-loader";
 import { useAutoGenerate } from "@/contexts/auto-generate-context";
 import { useParams } from "next/navigation";
-import { useContentAutoGenerateGetSettings, useContentAutoGenerateUpdateSchedule } from "@/services/content/content.api";
+import {
+  useContentAutoGenerateGetSettings,
+  useContentAutoGenerateUpdateSchedule,
+} from "@/services/content/content.api";
 import { usePlatformKnowledgeGetAll } from "@/services/knowledge.api";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { AutoGenerateModal } from "./auto-generate-modal";
-import { Clock, Plus, Edit } from "lucide-react";
+import { AutoGenerateHistoryModal } from "./auto-generate-history-modal";
+import { Clock, Plus, Edit, History } from "lucide-react";
 import Image from "next/image";
 import {
   Dialog,
@@ -24,6 +28,7 @@ import { AutoGenerateSchedule } from "@/models/api/content/auto-generate";
 import { showToast } from "@/helper/show-toast";
 import { mapEnumPlatform } from "@/helper/map-enum-platform";
 import { TimeInput } from "@/components/ui/time-input";
+import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
 
 interface AutoGenerateProps {
   handleIfNoPlatformConnected: () => void;
@@ -57,6 +62,13 @@ export function AutoGenerate({
   const [dayInputs, setDayInputs] = useState<{
     [key: number]: { hour: string; minute: string };
   }>({});
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [scheduleToDelete, setScheduleToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: platformData } = usePlatformKnowledgeGetAll(businessId);
   const lenConnectedPlatform =
@@ -153,42 +165,99 @@ export function AutoGenerate({
     setIsModalOpen(true);
   };
 
-  const handleDeleteSchedule = async (scheduleId: string) => {
-    if (window.confirm(t("confirmDeleteSchedule"))) {
-      try {
-        await deleteScheduleDirectly(scheduleId);
-        setIsModalOpen(false);
-      } catch {
-        showToast("error", t("scheduleDeleteFailed"));
-      }
+  const handleDeleteSchedule = (schedule: AutoGenerateSchedule) => {
+    // Get schedule name (platforms and time)
+    const platformNames = schedule.platforms
+      .map((p) => mapEnumPlatform.getPlatformLabel(p))
+      .join(", ");
+    const scheduleName = `${platformNames} - ${schedule.time}`;
+    
+    setScheduleToDelete({
+      id: schedule.id,
+      name: scheduleName,
+    });
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!scheduleToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteScheduleDirectly(scheduleToDelete.id);
+      setIsDeleteModalOpen(false);
+      setIsModalOpen(false);
+      showToast("success", t("scheduleDeletedSuccessfully"));
+    } catch {
+      showToast("error", t("scheduleDeleteFailed"));
+    } finally {
+      setIsDeleting(false);
+      setScheduleToDelete(null);
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (!isDeleting) {
+      setIsDeleteModalOpen(false);
+      setScheduleToDelete(null);
     }
   };
 
   const handleToggleSchedule = async (scheduleId: string) => {
     try {
-      console.log('handleToggleSchedule called for scheduleId:', scheduleId);
-      
+      console.log("handleToggleSchedule called for scheduleId:", scheduleId);
+
       // Find the schedule to get its current status by checking all days
       let schedule = null;
       for (let day = 0; day < 7; day++) {
         const daySchedules = getSchedulesByDay(day);
-        schedule = daySchedules.find(s => s.id === scheduleId);
+        schedule = daySchedules.find((s) => s.id === scheduleId);
         if (schedule) {
-          console.log('Found schedule:', schedule.id, 'Current isActive:', schedule.isActive, 'Day:', day);
+          console.log(
+            "Found schedule:",
+            schedule.id,
+            "Current isActive:",
+            schedule.isActive,
+            "Day:",
+            day
+          );
           break;
         }
       }
-      
+
       if (!schedule) {
-        console.log('Schedule not found for ID:', scheduleId);
+        console.log("Schedule not found for ID:", scheduleId);
         showToast("error", t("scheduleNotFound"));
+        return;
+      }
+
+      // Check if schedule has no platforms
+      if (!schedule.platforms || schedule.platforms.length === 0) {
+        console.log("Schedule has no platforms");
+        
+        // If no connected platforms, show modal to connect platform
+        if (lenConnectedPlatform === 0) {
+          console.log("No connected platforms available");
+          handleIfNoPlatformConnected();
+          return;
+        }
+        
+        // If there are connected platforms, open edit modal to select platforms
+        console.log("Connected platforms available, opening edit modal");
+        showToast("info", t("pleaseSelectPlatform"));
+        handleEditSchedule(schedule);
         return;
       }
 
       // Toggle the active status
       const newActiveStatus = !schedule.isActive;
-      console.log('Toggling schedule from', schedule.isActive, 'to', newActiveStatus);
-      
+      console.log(
+        "Toggling schedule from",
+        schedule.isActive,
+        "to",
+        newActiveStatus
+      );
+
       // Create the update payload with all existing data but new isActive status
       const updateData = {
         day: schedule.day,
@@ -217,17 +286,25 @@ export function AutoGenerate({
         advProductPrice: schedule.advProductPrice,
         advRoleHashtags: schedule.advRoleHashtags,
       };
-      
+
       await updateScheduleMutation.mutateAsync({
         businessId,
         scheduleId,
         formData: updateData,
       });
 
-      console.log('Schedule updated successfully:', scheduleId, 'New status:', newActiveStatus);
-      showToast("success", newActiveStatus ? t("scheduleActivated") : t("scheduleDeactivated"));
+      console.log(
+        "Schedule updated successfully:",
+        scheduleId,
+        "New status:",
+        newActiveStatus
+      );
+      showToast(
+        "success",
+        newActiveStatus ? t("scheduleActivated") : t("scheduleDeactivated")
+      );
     } catch (error) {
-      console.error('Error toggling schedule:', error);
+      console.error("Error toggling schedule:", error);
       showToast("error", t("scheduleToggleFailed"));
     }
   };
@@ -264,13 +341,20 @@ export function AutoGenerate({
         <CardContent className="py-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              
               <h1 className="text-xl font-bold">{t("autoGenerate")}</h1>
               <div className="flex flex-row gap-2 items-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsHistoryModalOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  {t("history")}
+                </Button>
                 <Switch
                   checked={globalEnabled}
                   onCheckedChange={async (v) => {
-                    console.log('Global switch toggled:', v);
+                    console.log("Global switch toggled:", v);
                     if (lenConnectedPlatform === 0) {
                       handleIfNoPlatformConnected();
                       return;
@@ -279,9 +363,12 @@ export function AutoGenerate({
                     // Immediately save the preference change
                     try {
                       await onUpsert();
-                      console.log('Global preference updated successfully:', v);
+                      console.log("Global preference updated successfully:", v);
                     } catch (error) {
-                      console.error('Failed to update global preference:', error);
+                      console.error(
+                        "Failed to update global preference:",
+                        error
+                      );
                     }
                   }}
                   onClick={() => {
@@ -304,7 +391,7 @@ export function AutoGenerate({
 
               {/* 7 Day Cards - Only show when enabled */}
               {globalEnabled && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4   gap-4">
                   {DAYS.map((day) => {
                     const daySchedules = getSchedulesByDay(day.value);
                     return (
@@ -368,12 +455,19 @@ export function AutoGenerate({
                                   </div>
                                 </div>
                                 <div onClick={(e) => e.stopPropagation()}>
-                                  <Switch 
-                                    checked={schedule.isActive} 
+                                  <Switch
+                                    checked={schedule.isActive}
                                     onCheckedChange={(checked) => {
-                                      console.log('Switch clicked for schedule:', schedule.id, 'Current status:', schedule.isActive, 'New status:', checked);
+                                      console.log(
+                                        "Switch clicked for schedule:",
+                                        schedule.id,
+                                        "Current status:",
+                                        schedule.isActive,
+                                        "New status:",
+                                        checked
+                                      );
                                       handleToggleSchedule(schedule.id);
-                                    }} 
+                                    }}
                                   />
                                 </div>
                               </div>
@@ -386,26 +480,47 @@ export function AutoGenerate({
                               <label className="block text-xs font-medium mb-1 text-muted-foreground">
                                 {t("selectTime")}
                               </label>
-                               <div className="flex flex-row w-full justify-between items-center">
-                                 <TimeInput
-                                   hour={dayInputs[day.value]?.hour || ""}
-                                   minute={dayInputs[day.value]?.minute || ""}
-                                   onHourChange={(value) => handleDayHourChange(day.value, value)}
-                                   onMinuteChange={(value) => handleDayMinuteChange(day.value, value)}
-                                 />
-                                <Button
-                                  onClick={() =>
-                                    handleAddScheduleToDay(day.value)
+                              <div className="flex flex-row w-full justify-between items-center">
+                                <TimeInput
+                                  hour={dayInputs[day.value]?.hour || ""}
+                                  minute={dayInputs[day.value]?.minute || ""}
+                                  onHourChange={(value) =>
+                                    handleDayHourChange(day.value, value)
                                   }
-                                  className="px-3"
-                                  disabled={
-                                    !dayInputs[day.value]?.hour ||
-                                    !dayInputs[day.value]?.minute
+                                  onMinuteChange={(value) =>
+                                    handleDayMinuteChange(day.value, value)
                                   }
-                                >
-                                  <Plus className="h-4 w-4 mr-1" />
-                                  {t("addSchedule")}
-                                </Button>
+                                />
+                                <div className="hidden xl:block">
+                                  <Button
+                                    onClick={() =>
+                                      handleAddScheduleToDay(day.value)
+                                    }
+                                    className=" px-3"
+                                    disabled={
+                                      !dayInputs[day.value]?.hour ||
+                                      !dayInputs[day.value]?.minute
+                                    }
+                                  >
+                                    <Plus className="h-4 w-4 mr-1" />
+                                    {t("addScheduleFull")}
+                                  </Button>
+                                </div>
+                                <div className="block xl:hidden">
+                                  <Button
+                                    onClick={() =>
+                                      handleAddScheduleToDay(day.value)
+                                    }
+                                    className=" px-3"
+                                    disabled={
+                                      !dayInputs[day.value]?.hour ||
+                                      !dayInputs[day.value]?.minute
+                                    }
+                                  >
+                                    <Plus className="h-4 w-4 mr-1" />
+                                    {t("addScheduleShort")}
+                                  </Button>
+                                </div>
                               </div>
                             </div>
 
@@ -444,6 +559,21 @@ export function AutoGenerate({
         selectedTime={selectedTime}
         selectedPlatforms={selectedPlatforms}
         editingSchedule={editingSchedule}
+      />
+
+      <AutoGenerateHistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        title={t("deleteScheduleTitle")}
+        description={t("deleteScheduleDescription")}
+        itemName={scheduleToDelete?.name || ""}
+        isLoading={isDeleting}
       />
 
       {/* Image Preview Modal */}

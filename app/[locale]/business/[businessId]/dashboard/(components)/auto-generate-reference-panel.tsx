@@ -174,7 +174,7 @@ export function AutoGenerateReferencePanel() {
   return (
     <div className="h-full flex flex-col">
       {/* Tab Bar */}
-      <div className="py-4 sm:py-6">
+      <div className="p-4 sm:p-6">
         <div className="flex justify-center">
           <div className="flex bg-background rounded-lg  w-full">
             <button
@@ -201,7 +201,7 @@ export function AutoGenerateReferencePanel() {
         </div>
       </div>
 
-      <div className="flex-1 pb-6 overflow-y-auto">
+      <div className="flex-1 1 px-4 sm:px-6 pb-6 overflow-y-auto">
         {activeTab === "reference" && (
           <div className="space-y-4">
             {/* Search Bar */}

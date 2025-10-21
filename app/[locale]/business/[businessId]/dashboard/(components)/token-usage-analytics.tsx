@@ -8,7 +8,7 @@ export function TokenUsageAnalytics() {
   const { data: tokenUsageData } = useTokenGetAnalyticType(businessId);
   const data = tokenUsageData?.data?.data || [];
   return (
-    <div className="flex-1 gap-6 mb-6 w-full">
+    <div className="flex-1 gap-6 w-full">
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         {data.map((item) => (
           <TokenCard

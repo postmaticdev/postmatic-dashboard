@@ -37,8 +37,6 @@ export function LanguageToggle() {
   const changeLocale = async (next: string) => {
     if (!next || next === locale) return;
     router.replace(pathname, { locale: next });
-    await sleep(100);
-    window.location.reload();
   };
 
   return (

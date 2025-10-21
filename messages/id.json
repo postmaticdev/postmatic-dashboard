@@ -221,7 +221,15 @@
     "selectedTimes": "Waktu Terpilih",
     "platform": "Platform"
   },
+  "colorPicker": {
+    "setHex": "Atur Hex",
+    "previewColor": "Preview Warna"
+  },
   "autoGenerate": {
+    "scheduleToggleFailed": "Gagal mengubah status jadwal",
+    "scheduleActivated": "Jadwal berhasil diaktifkan",
+    "scheduleDeactivated": "Jadwal berhasil dinonaktifkan",
+    "history": "Riwayat",
     "autoGenerate": "Auto Generate",
     "saving": "Menyimpan...",
     "deleteSchedule": "Hapus Jadwal",
@@ -273,8 +281,11 @@
     "thursday": "Kamis",
     "friday": "Jumat",
     "saturday": "Sabtu",
-    "addSchedule": "Tambah Jadwal",
+    "addScheduleShort": "Tambah",
+    "addScheduleFull": "Tambah Jadwal",
     "confirmDeleteSchedule": "Apakah Anda yakin ingin menghapus jadwal ini?",
+    "deleteScheduleTitle": "Hapus Jadwal",
+    "deleteScheduleDescription": "Tindakan ini tidak dapat dibatalkan. Ini akan menghapus jadwal secara permanen dari pengaturan auto-generate Anda.",
     "scheduleDeletedSuccessfully": "Jadwal berhasil dihapus",
     "scheduleDeleteFailed": "Gagal menghapus jadwal",
     "scheduleUpdatedSuccessfully": "Jadwal berhasil diperbarui",
@@ -628,7 +639,11 @@
     "delete": "Hapus",
     "close": "Tutup",
     "itemDeleted": "Item berhasil dihapus",
-    "errorGenerateContent": "Kesalahan saat melakukan generate content, silakan coba lagi"
+    "errorGenerateContent": "Kesalahan saat melakukan generate content, silakan coba lagi",
+    "autoGenerateHistoryTitle": "Riwayat Auto Generate",
+    "autoGenerateHistoryDescription": "Lihat riwayat konten auto-generate Anda",
+    "noHistoryFound": "Tidak ada riwayat ditemukan",
+    "postedTo": "Diposting ke"
   },
   "businessKnowledge": {
     "notAvailable": "Tidak tersedia",
