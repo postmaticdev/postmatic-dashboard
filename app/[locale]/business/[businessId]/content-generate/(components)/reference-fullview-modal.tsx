@@ -77,15 +77,16 @@ export function ReferenceFullviewModal({
         {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
           {/* Preview Image */}
-          <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-background-secondary shadow-sm">
+          
             <Image
               src={template?.imageUrl}
               alt={template.name}
-              fill
-              className="object-cover"
+              width={500}
+              height={500}
+              className="w-full h-auto rounded-xl"
               priority
             />
-          </div>
+        
 
           {/* Description */}
           {/* <Card>
