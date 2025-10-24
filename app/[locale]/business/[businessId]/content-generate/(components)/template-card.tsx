@@ -16,6 +16,8 @@ import {
   useContentGenerate,
 } from "@/contexts/content-generate-context";
 import { useTranslations } from "next-intl";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DEFAULT_USER_AVATAR } from "@/constants";
 
 // {/* Content */}
 interface TemplateCardProps {
@@ -24,20 +26,20 @@ interface TemplateCardProps {
 }
 
 export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
-  const { 
-    onSaveUnsave, 
-    onSelectReferenceImage, 
+  const {
+    onSaveUnsave,
+    onSelectReferenceImage,
     isLoading,
     unsaveModal,
     onConfirmUnsave,
     onCloseUnsaveModal,
-    selectedTemplate
+    selectedTemplate,
   } = useContentGenerate();
 
   const t = useTranslations("templateCard");
-  
+
   const isSelected = selectedTemplate?.id === item.id;
-  
+
   return (
     <Card
       key={item.id}
@@ -59,11 +61,11 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
         </div>
         <div className="absolute top-2 right-2">
           <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">
-            {item.categories && item.categories.length > 0 ? (
-              item.categories.length === 1 
+            {item.categories && item.categories.length > 0
+              ? item.categories.length === 1
                 ? item.categories[0]
                 : `${item.categories[0]} +${item.categories.length - 1}`
-            ) : ""}
+              : ""}
           </span>
         </div>
         <div className="absolute bottom-2 right-2">
@@ -75,9 +77,19 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
 
       <div className="space-y-2 -mt-3">
         <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-medium text-sm">{item.name}</h3>
-            <p className="text-xs ">Publisher: {item.publisher}</p>
+          <div className="flex items-center gap-2">
+            <Image
+              src={item.publisher?.image || DEFAULT_USER_AVATAR}
+              alt={item.publisher?.name || "image"}
+              width={200}
+              height={200}
+              className="rounded-full w-8 h-8"
+            />
+
+            <div>
+              <h3 className="font-medium text-sm line-clamp-2">{item.name}</h3>
+              <p className="hidden sm:block text-xs ">Publisher: {item.publisher?.name}</p>
+            </div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -107,9 +119,10 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+          <p className="block sm:hidden text-xs ">Publisher: {item.publisher?.name}</p>
 
         <Button
-          className="w-full my-3 bg-blue-500 hover:bg-blue-600 text-white text-sm"
+          className="w-full my-0 sm:my-3 bg-blue-500 hover:bg-blue-600 text-white text-sm"
           disabled={isLoading || isSelected}
           onClick={() => {
             if (isLoading) return;
@@ -119,7 +132,7 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
           {isSelected ? t("selected") : t("use")}
         </Button>
       </div>
-      
+
       {/* Unsave Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={unsaveModal.isOpen && unsaveModal.item?.id === item.id}

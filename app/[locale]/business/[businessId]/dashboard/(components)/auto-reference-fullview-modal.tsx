@@ -47,7 +47,7 @@ export function AutoReferenceFullviewModal({
           <div>
             <DialogTitle>{template.name}</DialogTitle>
             <DialogDescription>
-              {m("by")} <span className="font-medium">{template.publisher}</span>
+              {m("by")} <span className="font-medium">{template.publisher?.name}</span>
             </DialogDescription>
           </div>
 
@@ -104,13 +104,14 @@ export function AutoReferenceFullviewModal({
             <Card>
               <CardContent className="py-4">
                 <h3 className="font-semibold  mb-3 text-sm uppercase tracking-wide">
-                  {m("category")}
+                  {m("productCategory")}
                 </h3>
                 <span className="inline-flex items-center bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
-                  {template.categories?.join(", ")}
+                  {template.productCategories?.join(", ")}
                 </span>
               </CardContent>
             </Card>
+            
                     {/* TODO: gaada harga */}
             {/* <Card>
               <CardContent className="py-4">
@@ -136,7 +137,7 @@ export function AutoReferenceFullviewModal({
             <Card>
               <CardContent className="py-4">
                 <h3 className="font-semibold  mb-3 text-sm uppercase tracking-wide">
-                  {m("tags")}
+                  {m("category")}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {template.categories.map((cat, index) => (

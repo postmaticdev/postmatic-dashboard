@@ -90,13 +90,7 @@ export function RSSTrendSection({
   useEffect(() => {
     if (openRssModal) {
       handleAddRSS();
-      // Clear the URL parameter after opening the modal
-      const newSearchParams = new URLSearchParams(searchParams.toString());
-      newSearchParams.delete("openRssModal");
-      const newUrl = newSearchParams.toString()
-        ? `${window.location.pathname}?${newSearchParams.toString()}`
-        : window.location.pathname;
-      router.replace(newUrl);
+      
     }
   }, [openRssModal, searchParams, router]);
 

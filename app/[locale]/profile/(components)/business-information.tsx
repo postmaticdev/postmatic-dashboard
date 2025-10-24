@@ -28,7 +28,7 @@ export function BusinessInformation() {
               className="flex flex-col md:flex-row flex-warp md:items-center justify-between p-3 rounded-lg bg-background-secondary"
             >
               <div className="flex items-center flex-row gap-3">
-                <div className="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
                   <Image
                     src={business.logo || DEFAULT_BUSINESS_IMAGE}
                     alt={business.name}
@@ -62,7 +62,7 @@ export function BusinessInformation() {
                 </div>
 
                 <Link
-                  href={`/${locale}/business/${business.id}/dashboard`}
+                  href={`/business/${business.id}/dashboard`}
                   prefetch={false}
                 >
                   <Button

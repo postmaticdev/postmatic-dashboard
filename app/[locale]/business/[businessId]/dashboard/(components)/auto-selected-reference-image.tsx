@@ -11,7 +11,7 @@ export const AutoSelectedReferenceImage = () => {
 
   if (!form?.basic?.referenceImage) return null;
   return (
-    <div className=" space-y-2 " id="selected-reference-image">
+    <div className=" space-y-2 " id="auto-selected-reference-image">
       <h3 className="font-medium text-sm">{t("selectedReferenceImage")}</h3>
       <Card className="p-4">
         <div className=" flex flex-row gap-2 justify-between">

@@ -29,7 +29,7 @@ import { mapEnumPlatform } from "@/helper/map-enum-platform";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { TimeInput } from "@/components/ui/time-input";
-import { Save, Sparkle, Sparkles, Trash2 } from "lucide-react";
+import { Save, Sparkles, Trash2 } from "lucide-react";
 
 interface AutoGenerateModalProps {
   isOpen: boolean;
@@ -342,7 +342,7 @@ export function AutoGenerateModal({
               </div>
 
               {/* Right Column - Form and Status */}
-              <div className="space-y-6 p-4 sm:p-6">
+              <div id="auto-generate-form-section" className="space-y-6 p-4 sm:p-6">
                 <AutoSelectedReferenceImage/>
               <AutoGenerateFormBasic />
               <AutoGenerateFormAdvanced />

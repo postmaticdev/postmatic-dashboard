@@ -249,7 +249,7 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className="bg-card"
-                  placeholder={t("emailPlaceholder")}
+ 
                   disabled
                 />
               </div>

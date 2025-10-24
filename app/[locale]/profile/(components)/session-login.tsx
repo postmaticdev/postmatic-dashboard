@@ -20,7 +20,7 @@ export function SessionLogin() {
   const mLogout = useAuthProfileLogout();
   const { formatDate } = useDateFormat();
   const mLogoutAll = useAuthProfileLogoutAll();
-  const t = useTranslations();
+  const t = useTranslations("sessionLogin");
 
   const handleLogout = async (refreshToken: string) => {
     try {

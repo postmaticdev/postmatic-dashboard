@@ -15,6 +15,7 @@ import {
   useAutoGenerate,
 } from "@/contexts/auto-generate-context";
 import { useTranslations } from "next-intl";
+import { DEFAULT_USER_AVATAR } from "@/constants";
 
 // {/* Content */}
 interface TemplateCardProps {
@@ -70,9 +71,19 @@ export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
 
       <div className="space-y-2 -mt-3">
         <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-medium text-sm">{item.name}</h3>
-            <p className="text-xs ">Publisher: {item.publisher}</p>
+          <div className="flex items-center gap-2">
+            <Image
+              src={item.publisher?.image || DEFAULT_USER_AVATAR}
+              alt={item.publisher?.name || "image"}
+              width={200}
+              height={200}
+              className="rounded-full w-8 h-8"
+            />
+
+            <div>
+              <h3 className="font-medium text-sm line-clamp-2">{item.name}</h3>
+              <p className="hidden sm:block text-xs ">Publisher: {item.publisher?.name}</p>
+            </div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -88,12 +99,14 @@ export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
                 <Eye className="mr-2 h-4 w-4" />
                 {t("detail")}
               </DropdownMenuItem>
+              
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+          <p className="block sm:hidden text-xs ">Publisher: {item.publisher?.name}</p>
 
         <Button
-          className="w-full my-3 bg-blue-500 hover:bg-blue-600 text-white text-sm"
+          className="w-full my-0 sm:my-3 bg-blue-500 hover:bg-blue-600 text-white text-sm"
           disabled={isLoading || isSelected}
           onClick={() => {
             if (isLoading) return;

@@ -54,7 +54,11 @@ export interface Template {
   imageUrl: string;
   categories: string[];
   productCategories: string[];
-  publisher: string;
+  publisher: {
+    id: string;
+    name: string;
+    image: string | null;
+  } | null;
   createdAt: string;
   updatedAt: string;
   price: 0;
@@ -324,7 +328,11 @@ export function AutoGenerateProvider({
     categories: item?.templateImageCategories.map((cat) => cat.name) || [],
     productCategories: item?.templateProductCategories.map((cat) => cat.indonesianName) || [],
     price: 0,
-    publisher: item?.publisher || "Postmatic",
+    publisher: item?.publisher || {
+      id: "",
+      name: "Postmatic",
+      image: null,
+    },
     type: "published",
     createdAt: item?.createdAt,
     updatedAt: item?.updatedAt,
@@ -376,7 +384,11 @@ export function AutoGenerateProvider({
     categories: item?.templateImageContent?.templateImageCategories.map((cat) => cat.name) || [],
     productCategories: item?.templateImageContent?.templateProductCategories.map((cat) => cat.indonesianName) || [],
     price: 0,
-    publisher: item?.templateImageContent?.publisher || "Postmatic",
+    publisher: item?.templateImageContent?.publisher || {
+      id: "",
+      name: "Postmatic",
+      image: null,
+    },
     type: "saved",
     createdAt: item?.createdAt,
     updatedAt: item?.updatedAt,
@@ -446,13 +458,24 @@ export function AutoGenerateProvider({
       ...formBasic,
       referenceImage: imageUrl,
       referenceImageName: imageName,
-      referenceImagePublisher: template?.publisher || null,
+      referenceImagePublisher: template?.publisher?.name || null,
     });
 
     // Set selected template for visual feedback
     if (template) {
       setSelectedTemplate(template);
     }
+
+    // Add automatic scrolling to form section
+    setTimeout(() => {
+      const formSectionElement =
+        document.getElementById("auto-generate-form-section");
+      console.log("Auto-scroll: formSectionElement found:", !!formSectionElement);
+      if (formSectionElement) {
+        console.log("Auto-scroll: scrolling to form section");
+        formSectionElement.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
   }, [formBasic]);
 
   const onSelectAiModel = useCallback((model: AiModelRes) => {

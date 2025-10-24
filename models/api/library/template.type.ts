@@ -8,15 +8,17 @@ export interface SavedTemplateRes {
   name: string;
   imageUrl: string;
   templateImageContent: TemplateImageContent;
-  templateImageCategories: TemplateImageCategories[];
-  templateProductCategories: TemplateProductCategories[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface TemplateImageContent {
   id: string;
-  publisher: string | null;
+  publisher: {
+    id: string;
+    name: string;
+    image: string | null;
+  } | null;
   templateImageCategories: TemplateImageCategories[];
   templateProductCategories: TemplateProductCategories[];
 }
@@ -34,7 +36,11 @@ export interface PublishedTemplateRes {
   id: string;
   name: string;
   imageUrl: string;
-  publisher: string | null;
+  publisher: {
+    id: string;
+    name: string;
+    image: string | null;
+  } | null;
   templateImageCategories: TemplateImageCategories[];
   templateProductCategories: TemplateProductCategories[];
   createdAt: string;

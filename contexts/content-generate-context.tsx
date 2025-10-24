@@ -70,7 +70,11 @@ export interface Template {
   imageUrl: string;
   categories: string[];
   productCategories: string[];
-  publisher: string;
+  publisher: {
+    id: string;
+    name: string;
+    image: string | null;
+  } | null;
   createdAt: string;
   updatedAt: string;
   price: 0; // TODO: belum ada price
@@ -598,7 +602,11 @@ export const ContentGenerateProvider = ({
         categories: item?.templateImageCategories.map((cat) => cat.name) || [],
         productCategories: item?.templateProductCategories.map((cat) => cat.indonesianName) || [],
         price: 0,
-        publisher: item?.publisher || "Postmatic",
+        publisher: item?.publisher || {
+          id: "",
+          name: "Postmatic",
+          image: null,
+        },
         type: "published",
         createdAt: item?.createdAt,
         updatedAt: item?.updatedAt,
@@ -668,7 +676,11 @@ export const ContentGenerateProvider = ({
       categories: item?.templateImageContent?.templateImageCategories.map((cat) => cat.name) || [],
       productCategories: item?.templateImageContent?.templateProductCategories.map((cat) => cat.indonesianName) || [],
       price: 0,
-      publisher: item?.templateImageContent?.publisher || "Postmatic",
+      publisher: item?.templateImageContent?.publisher || {
+        id: "",
+        name: "Postmatic",
+        image: null,
+      },
       type: "saved",
       createdAt: item?.createdAt,
       updatedAt: item?.updatedAt,
