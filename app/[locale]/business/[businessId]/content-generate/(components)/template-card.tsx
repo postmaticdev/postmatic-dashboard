@@ -54,6 +54,7 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
           <Image
             src={item.imageUrl}
             alt="Placeholder Colorful"
+            onClick={() => onDetail(item)}
             fill
             className="object-cover  transform-gpu transition-transform duration-500 ease-out will-change-transform group-hover:scale-110"
             priority
@@ -91,7 +92,7 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
               <p className="hidden sm:block text-xs ">Publisher: {item.publisher?.name}</p>
             </div>
           </div>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                 <MoreHorizontal className="h-4 w-4" />
@@ -117,7 +118,7 @@ export const TemplateCard = ({ item, onDetail }: TemplateCardProps) => {
                 {item.type === "saved" ? t("unsave") : t("save")}
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
           <p className="block sm:hidden text-xs ">Publisher: {item.publisher?.name}</p>
 

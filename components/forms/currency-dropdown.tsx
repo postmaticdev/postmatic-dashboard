@@ -16,6 +16,7 @@ interface CurrencyDropdownProps {
   label?: string;
   error?: string;
   onFocus?: () => void;
+  disabled?: boolean;
 }
 
 const CURRENCIES = [
@@ -45,7 +46,7 @@ export function CurrencyDropdown({
   value,
   onChange,
   placeholder = "Pilih mata uang",
-
+  disabled = false,
   error,
   onFocus,
 }: CurrencyDropdownProps) {
@@ -55,7 +56,7 @@ export function CurrencyDropdown({
   return (
     <div className="space-y-1">
   
-      <Select value={value} onValueChange={onChange}>
+      <Select value={value} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger
           className={error ? "border-red-500 focus:border-red-500" : ""}
           onFocus={onFocus}

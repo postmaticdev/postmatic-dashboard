@@ -26,6 +26,7 @@ export interface TemplateImageSavedCount {
 
 // Creator Design interface
 export interface CreatorDesign {
+  currency: string;
   id: string;
   name: string;
   imageUrl: string;
@@ -45,8 +46,9 @@ export interface CreatorDesign {
 export interface CreateDesignRequest {
   name: string;
   imageUrl: string;
-  price?: number;
+  price: number;
   isPublished?: boolean;
+  currency: string;
   templateImageCategoryIds?: string[];
   templateProductCategoryIds?: string[];
 }

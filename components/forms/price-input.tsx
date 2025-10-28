@@ -26,6 +26,7 @@ interface PriceInputProps {
   label?: string;
   currency?: string;
   error?: string;
+  disabled?: boolean;
   onFocus?: () => void;
 }
 
@@ -33,7 +34,7 @@ export function PriceInput({
   value,
   onChange,
   placeholder = "Masukkan harga produk",
-
+  disabled = false,
   currency = "IDR",
   error,
   onFocus,
@@ -111,7 +112,7 @@ export function PriceInput({
 
   return (
     <div className="space-y-1 flex-grow">
-      <div className="relative">
+      <div className={`relative ${disabled ? "cursor-not-allowed" : ""}`}>
         <Input
           id="price"
           type="text"
@@ -124,6 +125,7 @@ export function PriceInput({
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
+          disabled={disabled}
           className={`pr-16 ${
             error ? "border-red-500 focus:border-red-500" : ""
           }`}

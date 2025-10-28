@@ -2,34 +2,28 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye } from "lucide-react";
 import Image from "next/image";
-import {
-  Template,
-  useAutoGenerate,
-} from "@/contexts/auto-generate-context";
 import { useTranslations } from "next-intl";
 import { DEFAULT_USER_AVATAR } from "@/constants";
+import { Template } from "./shared-reference-panel";
 
-// {/* Content */}
-interface TemplateCardProps {
+interface SharedTemplateCardProps {
   item: Template;
   onDetail: (item: Template | null) => void;
+  onSelectReferenceImage: (imageUrl: string, imageName: string | null, template?: Template) => void;
+  onSaveUnsave?: (template: Template) => void;
+  isLoading: boolean;
+  selectedTemplate: Template | null;
 }
 
-export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
-  const { 
-    onSelectReferenceImage, 
-    isLoading,
-    selectedTemplate
-  } = useAutoGenerate();
-
+export const SharedTemplateCard = ({ 
+  item, 
+  onDetail, 
+  onSelectReferenceImage,
+  onSaveUnsave,
+  isLoading,
+  selectedTemplate 
+}: SharedTemplateCardProps) => {
   const t = useTranslations("templateCard");
   
   const isSelected = selectedTemplate?.id === item.id;
@@ -55,16 +49,16 @@ export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
           />
         </div>
         <div className="absolute top-2 right-2">
-          <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">
-            {item.categories && item.categories.length > 0 ? (
-              item.categories.length === 1 
+          <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded hidden sm:block">
+            {item.categories && item.categories.length > 0
+              ? item.categories.length === 1
                 ? item.categories[0]
                 : `${item.categories[0]} +${item.categories.length - 1}`
-            ) : ""}
+              : ""}
           </span>
         </div>
         <div className="absolute bottom-2 right-2">
-          <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">
+          <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded hidden sm:block">
             {item.productCategories}
           </span>
         </div>
@@ -86,28 +80,12 @@ export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
               <p className="hidden sm:block text-xs ">Publisher: {item.publisher?.name}</p>
             </div>
           </div>
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => onDetail(item)}
-                className="cursor-pointer"
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                {t("detail")}
-              </DropdownMenuItem>
-              
-            </DropdownMenuContent>
-          </DropdownMenu> */}
         </div>
-          <p className="block sm:hidden text-xs ">Publisher: {item.publisher?.name}</p>
+        <p className="block sm:hidden text-xs ">Publisher: {item.publisher?.name}</p>
+    
 
         <Button
-          className="w-full my-0 sm:my-3 bg-blue-500 hover:bg-blue-600 text-white text-sm"
+          className="w-full mt-0 sm:mt-3 bg-blue-500 hover:bg-blue-600 text-white text-sm"
           disabled={isLoading || isSelected}
           onClick={() => {
             if (isLoading) return;
@@ -120,3 +98,4 @@ export const AutoTemplateCard = ({ item, onDetail }: TemplateCardProps) => {
     </Card>
   );
 };
+

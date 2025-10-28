@@ -1,6 +1,12 @@
 "use client";
 
-import { Dialog, DialogContent, DialogFooterWithButton, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooterWithButton,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { UploadPhoto } from "@/components/forms/upload-photo";
 import { TextField } from "@/components/forms/text-field";
 import { CreatorProductCategoryDropdown } from "@/components/forms/creator-product-category-dropdown";
@@ -9,6 +15,8 @@ import { useCreatorDesign } from "@/contexts/creator-design-context";
 import { useTranslations } from "next-intl";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { PriceInput } from "../forms/price-input";
+import { CurrencyDropdown } from "../forms/currency-dropdown";
 
 export function CreatorDesignFormModal() {
   const {
@@ -46,8 +54,11 @@ export function CreatorDesignFormModal() {
     }
   };
 
-  const updateField = (key: keyof typeof formData, value: string | number | boolean | string[] | null) => {
-    setFormData(prev => ({
+  const updateField = (
+    key: keyof typeof formData,
+    value: string | number | boolean | string[] | null
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [key]: value,
     }));
@@ -55,7 +66,7 @@ export function CreatorDesignFormModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent >
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             {isEdit ? t("editDesign") : t("createNewDesign")}
@@ -66,11 +77,13 @@ export function CreatorDesignFormModal() {
           {/* Upload Reference Image */}
           <UploadPhoto
             label={t("referenceImage")}
-            onImageChange={(url: string | null) => updateField("imageUrl", url || "")}
+            onImageChange={(url: string | null) =>
+              updateField("imageUrl", url || "")
+            }
             currentImage={formData.imageUrl}
             error={errors.imageUrl}
           />
-         
+
           {/* Design Name */}
           <TextField
             label={t("designName")}
@@ -83,7 +96,9 @@ export function CreatorDesignFormModal() {
           {/* Product Category */}
           <CreatorProductCategoryDropdown
             value={formData.templateProductCategoryIds?.[0] || ""}
-            onChange={(value) => updateField("templateProductCategoryIds", [value])}
+            onChange={(value) =>
+              updateField("templateProductCategoryIds", [value])
+            }
             placeholder={t("selectProductCategory")}
             label={t("productCategory")}
             error={errors.templateProductCategoryIds}
@@ -92,20 +107,38 @@ export function CreatorDesignFormModal() {
           {/* Image Category */}
           <ImageCategoryDropdown
             value={formData.templateImageCategoryIds?.[0] || ""}
-            onChange={(value) => updateField("templateImageCategoryIds", [value])}
+            onChange={(value) =>
+              updateField("templateImageCategoryIds", [value])
+            }
             placeholder={t("selectImageCategory")}
             label={t("imageCategory")}
             error={errors.templateImageCategoryIds}
           />
 
           {/* Price */}
-          {/* <PriceInput
-            value={formData.price || 0}
-            onChange={(value) => updateField("price", value)}
-            placeholder={t("enterPrice")}
-            label={t("price")}
-            error={errors.price}
-          /> */}
+          <Label className="text-sm font-medium text-foreground mb-1">
+            {t("price")}
+          </Label>
+          <Label className="text-sm text-destructive font-medium mb-1">
+            {t("priceNote")}
+          </Label>
+          <div className="flex w-full gap-6 items-start justify-between">
+            <CurrencyDropdown
+              value={formData.currency}
+              onChange={(value) => updateField("currency", value)}
+              error={errors.currency}
+              disabled={true}
+            />
+
+            <PriceInput
+              value={formData.price}
+              onChange={(value) => updateField("price", value)}
+              placeholder={t("enterPrice")}
+              currency={formData.currency || "IDR"}
+              error={errors.price}
+              disabled={true}
+            />
+          </div>
 
           {/* Publish Toggle */}
           <div className="flex items-center space-x-2">
@@ -120,9 +153,14 @@ export function CreatorDesignFormModal() {
           </div>
         </div>
 
-        
         <DialogFooterWithButton
-          buttonMessage={isLoading ? t("saving") : (isEdit ? t("updateDesign") : t("createDesign"))}
+          buttonMessage={
+            isLoading
+              ? t("saving")
+              : isEdit
+              ? t("updateDesign")
+              : t("createDesign")
+          }
           onClick={handleSubmit}
           disabled={isLoading}
         />

@@ -525,6 +525,7 @@
     "noDesignFoundDescription": "Mulai buat design pertama Anda untuk memulai perjalanan kreatif"
   },
   "creatorDesign": {
+    "priceNote": "Harga belum dapat ditambahkan untuk sementara, silakan tunggu pembaruan",
     "createNewDesign": "Buat Desain Baru",
     "editDesign": "Edit Desain",
     "referenceImage": "Gambar Referensi",
@@ -628,6 +629,7 @@
     "isLoading": "Harap tunggu proses pembuatan bisnis selesai"
   },
   "modal": {
+    "noHistory": "Tidak ada riwayat ditemukan",
     "addCommentOrInstruction": "Tambahkan komentar atau instruksi...",
     "managePlatformSocialMedia": "Kelola Platform Social Media",
     "managePlatformSocialMediaDescription": "Hubungkan atau putuskan platform media sosial Anda untuk meningkatkan strategi konten",

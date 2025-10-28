@@ -17,7 +17,7 @@ export function SettingsTabNavigation({ activeTab, onTabChange }: TabNavigationP
     { id: "history", label: t("historyTransactions") }
   ]
   return (
-    <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+    <div className="flex space-x-1 p-1 rounded-lg bg-card">
       {tabs.map((tab) => (
         <Button
           key={tab.id}

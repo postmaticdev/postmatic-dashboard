@@ -528,6 +528,7 @@
     "noDesignFoundDescription": "Start creating your first design to start your creative journey"
   },
   "creatorDesign": {
+    "priceNote": "Price cannot be added for now, please wait for the update",
     "createNewDesign": "Create New Design",
     "editDesign": "Edit Design",
     "referenceImage": "Reference Image",
@@ -631,6 +632,7 @@
     "isLoading": "Please wait for the business creation process to complete"
   },
   "modal": {
+    "noHistory": "No history found",
     "addCommentOrInstruction": "Add a comment or instruction...",
     "managePlatformSocialMedia": "Manage Platform Social Media",
     "managePlatformSocialMediaDescription": "Connect or disconnect your social media platform to improve content strategy",

@@ -42,16 +42,13 @@ export function ProductSelectionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{m("selectProduct")}</DialogTitle>
           <DialogDescription>
             {m("selectProductDescription")}
           </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-          {/* Search */}
+               {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
@@ -66,9 +63,13 @@ export function ProductSelectionModal({
               className="pl-10"
             />
           </div>
+        </DialogHeader>
+
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+     
 
           {/* Product List */}
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+          <div className="space-y-3 ">
             {productKnowledges.contents.map((product) => (
               <Card
                 key={product.id}

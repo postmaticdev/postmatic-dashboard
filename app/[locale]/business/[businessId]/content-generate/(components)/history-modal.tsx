@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { ChevronDown, ChevronUp, Eye, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Eye, Trash2 } from "lucide-react";
 import { useContentGenerate } from "@/contexts/content-generate-context";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
 import { useDateFormat } from "@/hooks/use-date-format";
@@ -26,6 +26,7 @@ import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-mod
 import { useContentJobDeleteHistoryJob } from "@/services/content/content.api";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { NoContent } from "@/components/base/no-content";
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -55,10 +56,7 @@ export function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
 
   const handleView = (item: JobData) => {
     if (item.status === "error") {
-      showToast(
-        "error",
-        m("errorGenerateContent")
-      );
+      showToast("error", m("errorGenerateContent"));
       return;
     }
     onSelectHistory(item);
@@ -101,6 +99,16 @@ export function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
           </div>
         </DialogHeader>
 
+        {histories.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <NoContent
+              icon={Clock}
+              title={m("noHistory")}
+              titleDescription=""
+            />
+          </div>
+        )}
+
         {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {histories.map((item, index) => {
@@ -129,9 +137,7 @@ export function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
                         <span>{item.name}</span>
                         <span className="text-sm text-muted-foreground">
                           {m("updatedAt")} :{" "}
-                          {formatDate(
-                            new Date(item.latestUpdate)
-                          )}{" "}
+                          {formatDate(new Date(item.latestUpdate))}{" "}
                           {dateFormat.getHhMm(new Date(item.latestUpdate))}
                         </span>
                       </div>
@@ -151,90 +157,97 @@ export function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
                           className="flex p-4 flex-col sm:flex-row sm:items-start gap-3 border-b border-border"
                           key={item.id + index}
                         >
-                          <div className="relative w-16 h-16 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                            <Image
-                              src={
-                                item?.result?.images[0] ||
-                                item.product?.images[0] ||
-                                item?.input?.referenceImage ||
-                                item?.input?.rss?.imageUrl ||
-                                DEFAULT_PLACEHOLDER_IMAGE
-                              }
-                              alt={item?.product?.name || ""}
-                              fill
-                              className="object-cover"
-                            />
+                          <div className="flex sm:hidden flex-wrap items-center gap-2">
+                            <span className="text-sm text-muted-foreground">
+                              {formatDate(new Date(item.createdAt))}{" "}
+                              {dateFormat.getHhMm(new Date(item.createdAt))}
+                            </span>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <Badge
-                                variant={
-                                  item.status === "done"
-                                    ? "default"
-                                    : "secondary"
+                          <div className="flex flex-row gap-2">
+                            <div className="relative w-16 h-16 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                              <Image
+                                src={
+                                  item?.result?.images[0] ||
+                                  item.product?.images[0] ||
+                                  item?.input?.referenceImage ||
+                                  item?.input?.rss?.imageUrl ||
+                                  DEFAULT_PLACEHOLDER_IMAGE
                                 }
-                                className={cn(
-                                  mapEnumJobStatus.getColor(item.status)
-                                )}
-                              >
-                                {mapEnumJobStatus.getIcon(
-                                  item.status,
-                                  item.status === "processing"
-                                    ? "animate-spin"
-                                    : ""
-                                )}
-                                {mapEnumJobStatus.getLabel(item.status)}
-                              </Badge>
-                              <Badge variant="outline">
-                                {item?.input?.model}
-                              </Badge>
-                              <Badge variant="outline">
-                                {item?.input?.ratio}
-                              </Badge>
-                              {item?.input?.designStyle && (
-                                <Badge variant="outline">
-                                  {item?.input?.designStyle}
+                                alt={item?.product?.name || ""}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="hidden sm:flex flex-wrap items-center mb-2">
+                                <span className="text-sm text-muted-foreground">
+                                  {formatDate(new Date(item.createdAt))}{" "}
+                                  {dateFormat.getHhMm(new Date(item.createdAt))}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge
+                                  variant={
+                                    item.status === "done"
+                                      ? "default"
+                                      : "secondary"
+                                  }
+                                  className={cn(
+                                    mapEnumJobStatus.getColor(item.status)
+                                  )}
+                                >
+                                  {mapEnumJobStatus.getIcon(
+                                    item.status,
+                                    item.status === "processing"
+                                      ? "animate-spin"
+                                      : ""
+                                  )}
+                                  {mapEnumJobStatus.getLabel(item.status)}
                                 </Badge>
-                              )}
-                              <Badge variant="outline">
-                                {item?.input?.category}
-                              </Badge>
-                              <Badge variant="outline">
-                                {mapEnumJobType.getLabel(item?.type)}
-                              </Badge>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 mt-2">
-                              <span className="text-sm text-muted-foreground">
-                                {formatDate(
-                                  new Date(item.createdAt)
-                                )}{" "}
-                                {dateFormat.getHhMm(new Date(item.createdAt))}
-                              </span>
-                            </div>
-                            <div className="mt-2">
-                              <span className="text-sm break-words">
-                                {item?.input?.caption}
-                              </span>
+                                <Badge variant="outline">
+                                  {item?.input?.model}
+                                </Badge>
+                                <Badge variant="outline">
+                                  {item?.input?.ratio}
+                                </Badge>
+                                {item?.input?.designStyle && (
+                                  <Badge variant="outline">
+                                    {item?.input?.designStyle}
+                                  </Badge>
+                                )}
+                                <Badge variant="outline">
+                                  {item?.input?.category}
+                                </Badge>
+                                <Badge variant="outline">
+                                  {mapEnumJobType.getLabel(item?.type)}
+                                </Badge>
+                              </div>
+
+                              {/* <div className="mt-2">
+                                <span className="text-sm break-words">
+                                  {item?.input?.caption}
+                                </span>
+                              </div> */}
                             </div>
                           </div>
-                          <div className="flex flex-col items-center gap-2">
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              size="sm"
-                              onClick={() => handleView(item)}
-                            >
-                              <Eye className="h-4 w-4 mr-2" />
-                              {m("view")}
-                            </Button>
+                          <div className="flex flex-row sm:flex-col items-center gap-2 w-full sm:w-fit">
                             <Button
                               variant="destructive"
-                              className="w-full"
-                              size="sm"
+                              className=" flex-1 w-full"
+                           
                               onClick={() => handleDelete(item)}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               {m("delete")}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="flex-1 w-full"
+                             
+                              onClick={() => handleView(item)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              {m("view")}
                             </Button>
                           </div>
                         </div>

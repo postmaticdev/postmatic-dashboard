@@ -82,8 +82,7 @@ export default function CheckoutPage() {
 
       {/* Main content */}
       <div className="flex-1 p-3 sm:p-4 lg:p-12 max-w-[800px] mx-auto">
-        {/* Mobile back button */}
-        <MobileBackButton />
+     
 
         {/* Mobile Order Summary Card */}
         <OrderSummary variant="mobile" />

@@ -60,6 +60,7 @@ const initialFormData: CreateDesignRequest = {
   imageUrl: "",
   price: 0,
   isPublished: true,
+  currency: "IDR",
   templateImageCategoryIds: [],
   templateProductCategoryIds: [],
 };
@@ -100,6 +101,7 @@ export function CreatorDesignProvider({ children }: { children: React.ReactNode 
     setFormData({
       name: design.name,
       imageUrl: design.imageUrl,
+      currency: design.currency,
       price: design.price,
       isPublished: design.isPublished,
       templateImageCategoryIds: design.templateImageCategories.map(cat => cat.id),

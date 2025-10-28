@@ -90,7 +90,7 @@ export function PaginationWithControls({
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
         {/* Sort Controls */}
         {showSort ? (
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+          <div className="flex flex-row gap-2 sm:gap-3 w-full sm:w-auto">
             <div className="flex gap-2">
               <Select
                 value={sort}

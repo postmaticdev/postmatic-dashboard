@@ -1,5 +1,6 @@
 import { useCheckout } from "@/contexts/checkout-context";
 import { formatIdr } from "@/helper/formatter";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
@@ -53,14 +54,14 @@ export function OrderSummary({ variant }: OrderSummaryProps) {
       >
         {/* Logo - Only show on desktop */}
         {isDesktop && (
-          <div className="mb-8">
+          <Link href="/" className="mb-8">
             <Image
               src="/logowhite.png"
               alt="Postmatic Logo"
               width={70}
               height={40}
             />
-          </div>
+          </Link>
         )}
 
         {/* Header */}

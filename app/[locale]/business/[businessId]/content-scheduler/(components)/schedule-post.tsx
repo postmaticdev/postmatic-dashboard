@@ -226,13 +226,13 @@ export function SchedulePost({ onDashboard = false }: SchedulePostProps) {
           {isLoadingUpcoming ? (
             <UpcomingPostsSkeleton />
           ) : upcomings.length === 0 ? (
-            <div className="justify-center">
+            
             <NoContent
               icon={ClipboardClock}
               title={t("noContent")}
               titleDescription={t("noContentDescription")}
               />
-              </div>
+             
           ) : (
             <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
               {upcomings.map((post, index) => (

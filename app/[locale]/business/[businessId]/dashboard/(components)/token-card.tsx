@@ -17,7 +17,7 @@ export function TokenCard({
 }: TokenCardProps) {
   const t = useTranslations("tokenUsageCard");
   return (
-    <div className="bg-card rounded-lg p-4 shadow-sm border border-border relative w-full">
+    <div className={`bg-card rounded-lg p-4 shadow-sm border border-border relative w-full ${isSoon ? "opacity-50 cursor-not-allowed" : ""}` } >
       {isSoon && (
         <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
           {t("soon")}

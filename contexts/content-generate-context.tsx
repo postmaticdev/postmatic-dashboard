@@ -90,6 +90,7 @@ interface BasicForm extends GenerateContentBase {
   customCategory: string;
   customDesignStyle: string;
   referenceImageName: string | null;
+  referenceImagePublisher: string | null;
   caption: string;
   model: string;
 }
@@ -240,6 +241,7 @@ const initialFormBasic: ContentGenerateContext["form"]["basic"] = {
   customCategory: "",
   customDesignStyle: "",
   referenceImageName: null,
+  referenceImagePublisher: null,
   caption: "",
   model: "",
 };
@@ -581,15 +583,25 @@ export const ContentGenerateProvider = ({
     sortBy: "createdAt",
     sort: "desc",
   });
+  
+  // Fetch all data when category filter is applied, otherwise use normal pagination
+  const publishedApiQuery = useMemo(() => {
+    if (publishedQuery.productCategory) {
+      // Fetch all data for client-side filtering and pagination
+      return {
+        ...publishedQuery,
+        limit: 999, // Fetch all data
+        page: 1,
+      };
+    }
+    return publishedQuery;
+  }, [publishedQuery]);
+  
   const { data: publishedRes, isLoading: isLoadingPublished } =
-    useLibraryTemplateGetPublished(businessId, publishedQuery);
+    useLibraryTemplateGetPublished(businessId, publishedApiQuery);
   useEffect(() => {
     if (publishedRes) {
       setPublishedPagination(publishedRes?.data?.pagination);
-      setPublishedQuery({
-        ...publishedQuery,
-        page: publishedRes?.data?.pagination?.page,
-      });
     }
   }, [publishedRes]);
   const publishedData: Template[] = (publishedRes?.data.data || []).map(
@@ -615,7 +627,7 @@ export const ContentGenerateProvider = ({
   );
 
   // Client-side filtering by productCategory if server-side filtering is not working
-  const filteredPublishedData = useMemo(() => {
+  const allFilteredPublishedData = useMemo(() => {
     if (!publishedQuery.productCategory) {
       return publishedData;
     }
@@ -635,9 +647,39 @@ export const ContentGenerateProvider = ({
     );
   }, [publishedData, publishedQuery.productCategory, productCategoriesData]);
 
+  // Apply client-side pagination when category filter is active
+  const { paginatedData: filteredPublishedData, pagination: adjustedPublishedPagination } = useMemo(() => {
+    // If category filter is applied, do client-side pagination
+    if (publishedQuery.productCategory) {
+      const limit = publishedQuery.limit || 10;
+      const page = publishedQuery.page || 1;
+      const total = allFilteredPublishedData.length;
+      const totalPages = Math.max(1, Math.ceil(total / limit));
+      
+      // Slice data for current page
+      const start = (page - 1) * limit;
+      const end = start + limit;
+      const paginatedData = allFilteredPublishedData.slice(start, end);
+      
+      const pagination: Pagination = {
+        limit,
+        page,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      };
+      
+      return { paginatedData, pagination };
+    }
+    
+    // Otherwise use server-side pagination
+    return { paginatedData: allFilteredPublishedData, pagination: publishedPagination };
+  }, [allFilteredPublishedData, publishedQuery.productCategory, publishedQuery.limit, publishedQuery.page, publishedPagination]);
+
   const publishedTemplates: ContentGenerateContext["publishedTemplates"] = {
     contents: filteredPublishedData,
-    pagination: publishedPagination,
+    pagination: adjustedPublishedPagination,
     filterQuery: publishedQuery,
     setFilterQuery: setPublishedQuery,
     isLoading: isLoadingPublished,
@@ -656,15 +698,25 @@ export const ContentGenerateProvider = ({
     sortBy: "createdAt",
     sort: "desc",
   });
+  
+  // Fetch all data when category filter is applied, otherwise use normal pagination
+  const savedApiQuery = useMemo(() => {
+    if (savedQuery.productCategory) {
+      // Fetch all data for client-side filtering and pagination
+      return {
+        ...savedQuery,
+        limit: 999, // Fetch all data
+        page: 1,
+      };
+    }
+    return savedQuery;
+  }, [savedQuery]);
+  
   const { data: savedRes, isLoading: isLoadingSaved } =
-    useLibraryTemplateGetSaved(businessId, savedQuery);
+    useLibraryTemplateGetSaved(businessId, savedApiQuery);
   useEffect(() => {
     if (savedRes) {
       setSavedPagination(savedRes?.data?.pagination);
-      setSavedQuery({
-        ...savedQuery,
-        page: savedRes?.data?.pagination?.page,
-      });
     }
   }, [savedRes]);
   const savedData: Template[] = (savedRes?.data.data || []).map((item) => {
@@ -688,7 +740,7 @@ export const ContentGenerateProvider = ({
   });
 
   // Client-side filtering by productCategory for saved templates
-  const filteredSavedData = useMemo(() => {
+  const allFilteredSavedData = useMemo(() => {
     if (!savedQuery.productCategory) {
       return savedData;
     }
@@ -708,9 +760,39 @@ export const ContentGenerateProvider = ({
     );
   }, [savedData, savedQuery.productCategory, productCategoriesData]);
 
+  // Apply client-side pagination when category filter is active
+  const { paginatedData: filteredSavedData, pagination: adjustedSavedPagination } = useMemo(() => {
+    // If category filter is applied, do client-side pagination
+    if (savedQuery.productCategory) {
+      const limit = savedQuery.limit || 10;
+      const page = savedQuery.page || 1;
+      const total = allFilteredSavedData.length;
+      const totalPages = Math.max(1, Math.ceil(total / limit));
+      
+      // Slice data for current page
+      const start = (page - 1) * limit;
+      const end = start + limit;
+      const paginatedData = allFilteredSavedData.slice(start, end);
+      
+      const pagination: Pagination = {
+        limit,
+        page,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      };
+      
+      return { paginatedData, pagination };
+    }
+    
+    // Otherwise use server-side pagination
+    return { paginatedData: allFilteredSavedData, pagination: savedPagination };
+  }, [allFilteredSavedData, savedQuery.productCategory, savedQuery.limit, savedQuery.page, savedPagination]);
+
   const savedTemplates: ContentGenerateContext["savedTemplates"] = {
     contents: filteredSavedData,
-    pagination: savedPagination,
+    pagination: adjustedSavedPagination,
     filterQuery: savedQuery,
     setFilterQuery: setSavedQuery,
     isLoading: isLoadingSaved,
@@ -837,6 +919,7 @@ export const ContentGenerateProvider = ({
       ...form.basic,
       referenceImage: imageUrl,
       referenceImageName: imageName,
+      referenceImagePublisher: template?.publisher?.name || null,
     });
 
     // Set selected template for visual feedback

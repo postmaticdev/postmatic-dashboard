@@ -28,7 +28,7 @@ export const SelectedArticleRss = () => {
         <div>
           <h3 className="font-medium text-sm">{form.rss.title}</h3>
           <div className="relative">
-            <p className={`text-xs text-muted-foreground mt-1 ${!expanded ? "line-clamp-10" : ""}`}>
+            <p className={`text-xs text-muted-foreground mt-1 ${!expanded ? "line-clamp-4" : ""}`}>
               {form.rss.summary}
             </p>
             <button

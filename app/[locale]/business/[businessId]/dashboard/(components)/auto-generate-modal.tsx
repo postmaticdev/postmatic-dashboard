@@ -330,9 +330,6 @@ export function AutoGenerateModal({
               )}
             </DialogDescription>
           </DialogHeader>
-          
-   
-
           <div className="flex-1 overflow-y-auto  space-y-4 sm:space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 ">
               {/* Left Column - Reference Libary */}

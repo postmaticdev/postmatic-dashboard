@@ -34,6 +34,7 @@ export function PreviewPanel() {
   const { businessId } = useParams() as { businessId: string };
   const { data: businessData } = useBusinessGetById(businessId);
   const businessName = businessData?.data?.data?.name;
+  const businessLogo = businessData?.data?.data?.logo;
   const t = useTranslations("previewPanel");
 
   const onOpenFullscreenImage = () => {
@@ -73,7 +74,7 @@ export function PreviewPanel() {
         <div className="p-4 border-b flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Image
-              src="/logoblue.png"
+              src={businessLogo || "/logoblue.png"}
               alt="logol"
               width={200}
               height={200}
