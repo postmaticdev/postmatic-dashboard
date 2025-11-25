@@ -377,6 +377,9 @@
     "checkPaymentStatus": "Cek Status Pembayaran"
   },
   "contentScheduler": {
+    "generateCaption": "Buat Caption (menggunakan Token)",
+    "addContentManually": "Tambah Konten Manual",
+    "addContentManuallyDescription": "Tambahkan foto dan caption secara manual ke pustaka konten Anda.",
     "postingManual": "Posting Manual",
     "postingAutomatic": "Posting Otomatis",
     "autoGenerate": "Auto Generate",

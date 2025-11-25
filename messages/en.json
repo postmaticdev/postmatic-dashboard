@@ -380,6 +380,9 @@
     "checkPaymentStatus": "Check Payment Status"
   },
   "contentScheduler": {
+    "generateCaption": "Generate Caption (using Token)",
+    "addContentManually": "Add Content Manually",
+    "addContentManuallyDescription": "Add photo and caption manually to your library.",
     "postingManual": "Manual Posting",
     "postingAutomatic": "Automatic Posting",
     "autoGenerate": "Auto Generate",

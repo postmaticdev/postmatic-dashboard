@@ -514,7 +514,6 @@ export function ContentLibrary({
           form={personalForm}
           setForm={setPersonalForm}
           errors={personalErrors}
-          setErrors={setPersonalErrors}
           onSave={handleSavePersonalContent}
           isSaving={mCreatePersonal.isPending}
         />

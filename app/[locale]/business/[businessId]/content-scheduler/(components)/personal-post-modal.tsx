@@ -13,9 +13,7 @@ import { UploadPhoto } from "@/components/forms/upload-photo";
 import { TextField } from "@/components/forms/text-field";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { useContentCaptionEnhance } from "@/services/content/content.api";
-import { useParams } from "next/navigation";
-import { showToast } from "@/helper/show-toast";
+import { Plus } from "lucide-react";
 
 export interface PersonalContentForm {
   image: string | null;
@@ -28,9 +26,6 @@ interface PersonalPostModalProps {
   form: PersonalContentForm;
   setForm: Dispatch<SetStateAction<PersonalContentForm>>;
   errors: Partial<Record<keyof PersonalContentForm, string>>;
-  setErrors: Dispatch<
-    SetStateAction<Partial<Record<keyof PersonalContentForm, string>>>
-  >;
   onSave: () => void;
   isSaving: boolean;
 }
@@ -41,40 +36,10 @@ export function PersonalPostModal({
   form,
   setForm,
   errors,
-  setErrors,
   onSave,
   isSaving,
 }: PersonalPostModalProps) {
   const t = useTranslations("contentScheduler");
-  const { businessId } = useParams() as { businessId: string };
-  const mEnhanceCaption = useContentCaptionEnhance();
-
-  const handleGenerateCaption = async () => {
-    if (!form.image) {
-      setErrors((prev) => ({ ...prev, image: "Please upload a photo" }));
-      showToast("error", "Please upload a photo");
-      return;
-    }
-
-    try {
-      const res = await mEnhanceCaption.mutateAsync({
-        businessId,
-        formData: {
-          images: [form.image],
-          model: "gemini",
-          currentCaption: form.caption || "",
-        },
-      });
-      setForm((prev) => ({
-        ...prev,
-        caption: res.data.data.caption || "",
-      }));
-      setErrors((prev) => ({ ...prev, caption: undefined, image: undefined }));
-      showToast("success", res.data.responseMessage);
-    } catch (error) {
-      showToast("error", error, t);
-    }
-  };
 
   return (
     <Dialog
@@ -115,14 +80,8 @@ export function PersonalPostModal({
                 error={errors.caption}
               />
             </div>
-            <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 whitespace-nowrap"
-              onClick={handleGenerateCaption}
-              disabled={!form.image || mEnhanceCaption.isPending}
-            >
-              {mEnhanceCaption.isPending
-                ? "Generating..."
-                : t("generateCaption")}
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 whitespace-nowrap">
+              {t("generateCaption")}
             </Button>
           </div>
         </div>
