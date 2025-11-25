@@ -13,7 +13,10 @@ import { UploadPhoto } from "@/components/forms/upload-photo";
 import { TextField } from "@/components/forms/text-field";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useContentCaptionEnhance } from "@/services/content/content.api";
+import { showToast } from "@/helper/show-toast";
+import { useParams } from "next/navigation";
 
 export interface PersonalContentForm {
   image: string | null;
@@ -40,6 +43,33 @@ export function PersonalPostModal({
   isSaving,
 }: PersonalPostModalProps) {
   const t = useTranslations("contentScheduler");
+  const { businessId } = useParams() as { businessId: string };
+  const mEnhanceCaption = useContentCaptionEnhance();
+
+  const handleGenerateCaption = async () => {
+    if (!form.image) {
+      showToast(
+        "error",
+        "Please upload a photo first"
+      );
+      return;
+    }
+
+    try {
+      const res = await mEnhanceCaption.mutateAsync({
+        businessId,
+        formData: {
+          images: [form.image],
+          model: "gemini",
+          currentCaption: form.caption || "",
+        },
+      });
+      setForm((prev) => ({ ...prev, caption: res.data.data.caption }));
+      showToast("success", res.data.responseMessage);
+    } catch (error) {
+      showToast("error", error, t);
+    }
+  };
 
   return (
     <Dialog
@@ -80,7 +110,14 @@ export function PersonalPostModal({
                 error={errors.caption}
               />
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 whitespace-nowrap">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 whitespace-nowrap"
+              onClick={handleGenerateCaption}
+              disabled={mEnhanceCaption.isPending}
+            >
+              {mEnhanceCaption.isPending && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
               {t("generateCaption")}
             </Button>
           </div>

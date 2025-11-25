@@ -468,6 +468,7 @@
     "visitSource": "Kunjungi Sumber"
   },
   "previewPanel": {
+    "enhanceCaption": "Tingkatkan Caption",
     "history": "Riwayat",
     "resetForm": "Reset Form",
     "optimizePrompt": "Optimize Prompt",

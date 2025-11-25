@@ -8,7 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { HistoryModal } from "@/app/[locale]/business/[businessId]/content-generate/(components)/history-modal";
 import { FullscreenImageModal } from "@/app/[locale]/business/[businessId]/content-generate/(components)/fullscreen-image-modal";
-import { Clock, RotateCcw } from "lucide-react";
+import { Clock, Loader2, RotateCcw, WandSparkles } from "lucide-react";
 import { useContentGenerate } from "@/contexts/content-generate-context";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
 import { useBusinessGetById } from "@/services/business.api";
@@ -16,6 +16,8 @@ import { useParams } from "next/navigation";
 import { LogoLoader } from "@/components/base/logo-loader";
 import { Progress } from "@/components/ui/progress";
 import { useTranslations } from "next-intl";
+import { useContentCaptionEnhance } from "@/services/content/content.api";
+import { showToast } from "@/helper/show-toast";
 
 export function PreviewPanel() {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
@@ -36,6 +38,7 @@ export function PreviewPanel() {
   const businessName = businessData?.data?.data?.name;
   const businessLogo = businessData?.data?.data?.logo;
   const t = useTranslations("previewPanel");
+  const mEnhanceCaption = useContentCaptionEnhance();
 
   const onOpenFullscreenImage = () => {
     if (selectedHistory?.result?.images.length === 0) {
@@ -64,6 +67,29 @@ export function PreviewPanel() {
         previewPanelRef.current?.scrollIntoView({ behavior: "smooth" });
       }
     }, 100);
+  };
+
+  const handleEnhanceCaption = async () => {
+    const imageUrl = selectedHistory?.result?.images?.[0];
+    if (!imageUrl) {
+      showToast("error", "Please generate content first to enhance caption");
+      return;
+    }
+
+    try {
+      const res = await mEnhanceCaption.mutateAsync({
+        businessId,
+        formData: {
+          images: [imageUrl],
+          model: "gemini",
+          currentCaption: form.basic.caption || "",
+        },
+      });
+      form.setBasic({ ...form.basic, caption: res.data.data.caption });
+      showToast("success", res.data.responseMessage);
+    } catch (error) {
+      showToast("error", error, t);
+    }
   };
 
   return (
@@ -169,15 +195,30 @@ export function PreviewPanel() {
             />
           </div>
           {selectedHistory && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-fit self-end lg:hidden"
-              onClick={() => onSelectHistory(null)}
-            >
-              <RotateCcw className="h-5 w-5" />
-              {t("resetForm")}
-            </Button>
+            <div className="flex flex-row gap-2 justify-between">
+              <Button
+                size="sm"
+                className=" w-fit lg:w-full bg-blue-500 hover:bg-blue-600 text-white"
+                disabled={isLoading || mEnhanceCaption.isPending}
+                onClick={handleEnhanceCaption}
+              >
+                {mEnhanceCaption.isPending ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <WandSparkles className="h-5 w-5" />
+                )}
+                {t("enhanceCaption")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-fit self-end lg:hidden"
+                onClick={() => onSelectHistory(null)}
+              >
+                <RotateCcw className="h-5 w-5" />
+                {t("resetForm")}
+              </Button>
+            </div>
           )}
         </div>
 
@@ -225,6 +266,7 @@ export function PreviewPanel() {
             className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             disabled={isLoading}
           >
+            <WandSparkles className="h-5 w-5" />
             {isLoading
               ? t("loading")
               : selectedHistory
@@ -277,6 +319,7 @@ export function PreviewPanel() {
           className="w-full bg-blue-500 hover:bg-blue-600 text-white"
           disabled={isLoading}
         >
+          <WandSparkles className="h-5 w-5" />
           {isLoading
             ? t("loading")
             : selectedHistory

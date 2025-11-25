@@ -471,6 +471,7 @@
     "visitSource": "Visit source"
   },
   "previewPanel": {
+    "enhanceCaption": "Enhance Caption",
     "history": "History",
     "resetForm": "Reset Form",
     "optimizePrompt": "Optimize Prompt",
