@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, Search, X } from "lucide-react";
+import { BookOpen, Plus, Search, X } from "lucide-react";
 import { CreatePostModal } from "./create-post-modal";
 import { ViewPostModal } from "./view-post-modal";
 import Image from "next/image";
@@ -15,6 +15,7 @@ import {
   useContentDraftSetReadyToPost,
   useContentPostedGetAllPostedImage,
   useContentSchedulerManualAddToQueue,
+  useContentPersonalCreate,
 } from "@/services/content/content.api";
 import { useParams } from "next/navigation";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
@@ -33,6 +34,7 @@ import { NoContent } from "@/components/base/no-content";
 import { ContentLibrarySkeleton } from "@/components/grid-skeleton/content-library-skeleton";
 import { useContentSchedulerTab } from "../page";
 import { useTranslations } from "next-intl";
+import { PersonalContentForm, PersonalPostModal } from "./personal-post-modal";
 
 export interface FormDataDraft {
   direct: DirectPostContentPld;
@@ -92,6 +94,11 @@ const initialFormDataView: FormDataView = {
   selectedPlatforms: [],
 };
 
+const initialPersonalForm: PersonalContentForm = {
+  image: null,
+  caption: "",
+};
+
 interface ContentLibraryProps {
   showPostingNow?: boolean;
   showAddtoQueue?: boolean;
@@ -136,9 +143,11 @@ export function ContentLibrary({
   const mDirectPostFromDraft = useContentDraftDirectPostFromDraft();
   const mSchedulePost = useContentSchedulerManualAddToQueue();
   const mAddToQueue = useContentDraftSetReadyToPost();
+  const mCreatePersonal = useContentPersonalCreate();
 
   const [modalPost, setModalPost] = useState(false);
   const [modalView, setModalView] = useState(false);
+  const [modalPersonal, setModalPersonal] = useState(false);
 
   const [formDataDraft, setFormDataDraft] = useState<FormDataDraft>({
     direct: initialDirectForm,
@@ -151,6 +160,12 @@ export function ContentLibrary({
     unPostedPlatforms: [],
     selectedPlatforms: [],
   });
+
+  const [personalForm, setPersonalForm] =
+    useState<PersonalContentForm>(initialPersonalForm);
+  const [personalErrors, setPersonalErrors] = useState<
+    Partial<Record<keyof PersonalContentForm, string>>
+  >({});
 
   const [initialPostType, setInitialPostType] = useState<"now" | "schedule">(
     "now"
@@ -241,6 +256,11 @@ export function ContentLibrary({
 
   const { setActiveTab } = useContentSchedulerTab();
 
+  const openPersonalModal = () => {
+    setPersonalErrors({});
+    setModalPersonal(true);
+  };
+
   const handleSave = async () => {
     try {
       switch (initialPostType) {
@@ -290,6 +310,36 @@ export function ContentLibrary({
   const onCloseModalView = () => {
     setModalView(false);
     setFormDataView(initialFormDataView);
+  };
+
+  const onClosePersonalModal = () => {
+    setModalPersonal(false);
+    setPersonalForm(initialPersonalForm);
+    setPersonalErrors({});
+  };
+
+  const handleSavePersonalContent = async () => {
+    const errors: Partial<Record<keyof PersonalContentForm, string>> = {};
+    if (!personalForm.image) {
+      errors.image = "Please upload a photo";
+    }
+    if (!personalForm.caption.trim()) {
+      errors.caption = "Caption is required";
+    }
+    setPersonalErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    try {
+      const res = await mCreatePersonal.mutateAsync({
+        businessId,
+        formData: {
+          images: personalForm.image ? [personalForm.image] : [],
+          caption: personalForm.caption,
+        },
+      });
+      showToast("success", res.data.responseMessage);
+      onClosePersonalModal();
+    } catch {}
   };
 
   const renderItems = (): React.JSX.Element[] => {
@@ -419,6 +469,14 @@ export function ContentLibrary({
       <CardContent className="py-6 space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">{t("contentLibrary")}</h2>
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 whitespace-nowrap"
+            onClick={openPersonalModal}
+            disabled={mCreatePersonal.isPending}
+          >
+            <Plus className="w-4 h-4" />
+            {t("addContent")}
+          </Button>
         </div>
 
         <div className="relative">
@@ -449,6 +507,17 @@ export function ContentLibrary({
             {renderItems()}
           </div>
         )}
+
+        <PersonalPostModal
+          isOpen={modalPersonal}
+          onClose={onClosePersonalModal}
+          form={personalForm}
+          setForm={setPersonalForm}
+          errors={personalErrors}
+          setErrors={setPersonalErrors}
+          onSave={handleSavePersonalContent}
+          isSaving={mCreatePersonal.isPending}
+        />
 
         <CreatePostModal
           isOpen={modalPost}

@@ -199,6 +199,31 @@ export interface DirectPostContentRes {
 }
 
 /*
+  Payload for Personal Content (manual upload)
+*/
+export interface PersonalContentPld {
+  images: string[];
+  caption: string;
+}
+
+/*
+  Payload for Enhance Caption
+*/
+export interface EnhanceCaptionPld {
+  images: string[];
+  model: string;
+  currentCaption?: string | null;
+}
+
+/*
+  Response for Enhance Caption
+*/
+export interface EnhanceCaptionRes {
+  caption: string;
+  tokenUsed: number;
+}
+
+/*
   Response for Delete Content
 */
 export interface DeleteContentRes {

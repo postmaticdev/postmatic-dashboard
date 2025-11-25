@@ -15,6 +15,9 @@ import {
   SaveContentPld,
   SaveContentRes,
   SetReadyToPostRes,
+  PersonalContentPld,
+  EnhanceCaptionPld,
+  EnhanceCaptionRes,
 } from "@/models/api/content/image.type";
 import { AiModelRes } from "@/models/api/content/ai-model";
 import {
@@ -214,6 +217,66 @@ export const useContentDraftDeleteDraft = (generatedImageContentId: string) => {
         queryKey: ["contentPostedGetAllPostedImage"],
       });
     },
+  });
+};
+
+// ============================== POSTED ==============================
+
+// ============================== PERSONAL (MANUAL UPLOAD) ==============================
+const personalService = {
+  createPersonalContent: (
+    businessId: string,
+    formData: PersonalContentPld
+  ) => {
+    return api.post<BaseResponse<ImageContentRes>>(
+      `/content/image/personal/${businessId}`,
+      formData
+    );
+  },
+};
+
+export const useContentPersonalCreate = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      businessId,
+      formData,
+    }: {
+      businessId: string;
+      formData: PersonalContentPld;
+    }) => personalService.createPersonalContent(businessId, formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["contentDraftGetAllDraftImage"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["contentPostedGetAllPostedImage"],
+      });
+    },
+  });
+};
+
+// ============================== POSTED ==============================
+
+// ============================== CAPTION ==============================
+const captionService = {
+  enhanceCaption: (businessId: string, formData: EnhanceCaptionPld) => {
+    return api.post<BaseResponse<EnhanceCaptionRes>>(
+      `/content/caption/enhance/${businessId}`,
+      formData
+    );
+  },
+};
+
+export const useContentCaptionEnhance = () => {
+  return useMutation({
+    mutationFn: ({
+      businessId,
+      formData,
+    }: {
+      businessId: string;
+      formData: EnhanceCaptionPld;
+    }) => captionService.enhanceCaption(businessId, formData),
   });
 };
 
