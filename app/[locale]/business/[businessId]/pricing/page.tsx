@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Header } from "@/components/base/header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Crown, Zap } from "lucide-react";
@@ -24,9 +23,6 @@ import { useSubscribtionGetSubscription } from "@/services/tier/subscribtion.api
 
 export default function Pricing() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"package" | "extraToken">(
-    "package"
-  );
   const queryClient = useQueryClient();
   const { businessId } = useParams() as { businessId: string };
   const { data: tokenData } = useAppProductGetToken(businessId || "");
@@ -42,13 +38,13 @@ export default function Pricing() {
 
   // Per-plan selected item (keyed by planId -> itemId)
   const [selectedItemsByPlan, setSelectedItemsByPlan] = useState<
-    Record<string, string | undefined>
+  Record<string, string | undefined>
   >({});
-
+  
   const setPlanSelectedItem = (planId: string, itemId: string) => {
     setSelectedItemsByPlan((prev) => ({ ...prev, [planId]: itemId }));
   };
-
+  
   const getSelectedItem = (
     plan: ProductSubscription
   ): AppProductSubscriptionItem | undefined => {
@@ -57,15 +53,19 @@ export default function Pricing() {
       return plan.appProductSubscriptionItems.find((i) => i.id === chosenId);
     return plan.appProductSubscriptionItems?.[0]; // default ke item pertama jika belum dipilih
   };
-
+  
   const { data: subscriptionDataTier } = useSubscribtionGetSubscription(
     businessId || ""
   );
   const isSubscribed = !!subscriptionDataTier?.data?.data?.valid;
-
+  
   const isFree = subscriptionDataTier?.data?.data?.subscription?.productName
-    ?.toLowerCase()
-    ?.includes("free");
+  ?.toLowerCase()
+  ?.includes("free");
+  
+  const [activeTab, setActiveTab] = useState<"package" | "extraToken">(
+    isFree ? "package" : "extraToken"
+  );
 
   const mCheckoutBank = useCheckoutPayBank();
   const tToast = useTranslations();
@@ -105,6 +105,7 @@ export default function Pricing() {
                 {t("choosePackageDescription")}
               </p>
             </div>
+
 
             {/* Tabs */}
             <div className="mb-8">

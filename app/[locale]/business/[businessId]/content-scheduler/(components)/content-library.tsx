@@ -467,10 +467,10 @@ export function ContentLibrary({
   return (
     <Card>
       <CardContent className="py-6 space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row gap-4 justify-between">
           <h2 className="text-2xl font-bold">{t("contentLibrary")}</h2>
           <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 whitespace-nowrap"
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center w-full md:w-auto"
             onClick={openPersonalModal}
             disabled={mCreatePersonal.isPending}
           >

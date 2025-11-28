@@ -336,6 +336,7 @@
     "notAvailableDescription": "Platform ini tidak tersedia"
   },
   "settings": {
+    "timezone": "Zona Waktu",
     "members": "Anggota",
     "historyTransactions": "Riwayat Transaksi",
     "admin": "Admin",

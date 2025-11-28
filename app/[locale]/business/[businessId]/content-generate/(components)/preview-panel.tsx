@@ -181,9 +181,9 @@ export function PreviewPanel() {
           )}
 
         {/* Caption - Instagram style */}
-        <div className="p-4 border-b flex flex-col gap-4">
+        <div className="block lg:hidden p-4 border-b flex-col space-y-4">
           <div className="text-sm">
-            <span className="font-medium mr-2 mb-6">{businessName}</span>
+            <div className="font-medium mb-2">{businessName}</div>
             <Textarea
               value={form.basic.caption || t("captionWillShowHere")}
               rows={3}
@@ -198,7 +198,7 @@ export function PreviewPanel() {
             <div className="flex flex-row gap-2 justify-between">
               <Button
                 size="sm"
-                className=" w-fit lg:w-full bg-blue-500 hover:bg-blue-600 text-white"
+                className=" w-fit  bg-blue-500 hover:bg-blue-600 text-white"
                 disabled={isLoading || mEnhanceCaption.isPending}
                 onClick={handleEnhanceCaption}
               >
@@ -212,7 +212,7 @@ export function PreviewPanel() {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-fit self-end lg:hidden"
+                className="w-fit self-end"
                 onClick={() => onSelectHistory(null)}
               >
                 <RotateCcw className="h-5 w-5" />

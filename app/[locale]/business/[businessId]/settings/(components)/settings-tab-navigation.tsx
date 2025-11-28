@@ -14,26 +14,26 @@ export function SettingsTabNavigation({ activeTab, onTabChange }: TabNavigationP
   const t = useTranslations("settings");
   const tabs = [
     { id: "members", label: t("members") },
-    { id: "history", label: t("historyTransactions") }
+    { id: "history", label: t("historyTransactions") },
+    { id: "timezone", label: t("timezone") }
   ]
   return (
-    <div className="flex space-x-1 p-1 rounded-lg bg-card">
-      {tabs.map((tab) => (
-        <Button
+    <div className="flex flex-row bg-card p-1 rounded-lg justify-between overflow-x-auto">
+        {tabs.map((tab) => (
+          <Button
           key={tab.id}
           variant={activeTab === tab.id ? "default" : "ghost"}
-          size="sm"
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "flex-1 p-6",
-            activeTab === tab.id 
-              ? "bg-primary text-white" 
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          <span className="truncate">{tab.label}</span>
-        </Button>
-      ))}
-    </div>
+              " p-6 flex-1",
+              activeTab === tab.id
+                ? "bg-primary text-white"
+                : "text-muted-foreground hover:text-foreground"
+              )}
+              >
+            {tab.label}
+          </Button>
+        ))}
+      </div>
   )
 }

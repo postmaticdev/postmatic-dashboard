@@ -85,20 +85,20 @@ export function MembersTable() {
     <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardContent className="p-0">
-          {/* Mobile list */}
-          <div className="flex flex-col p-4 sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+          <div className="flex flex-col py-4 px-4 sm:px-0 sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
             <CardTitle className="text-xl sm:text-2xl font-bold">
               {t("members")}
             </CardTitle>
             {invite && (
               <Button
-                onClick={onInviteMember}
-                className="w-full sm:w-auto text-white"
+              onClick={onInviteMember}
+              className="w-full sm:w-auto text-white"
               >
                 + {t("inviteMember")}
               </Button>
             )}
           </div>
+            {/* Mobile list */}
           <div className="block lg:hidden p-4 space-y-3">
             {members
               ?.filter((member) => JOINED_STATUS.includes(member.status))

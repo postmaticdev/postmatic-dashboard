@@ -134,14 +134,14 @@ export function ProfileDropdown() {
             onClick={handleProfile}
             className="cursor-pointer px-4 py-2"
           >
-            <Settings className="mr-2 h-4 w-4" />
+            <User className="text-foreground mr-2 h-4 w-4" />
             <span>{tSideBar("profile")}</span>
           </DropdownMenuItem>
 
           {/* Dark Mode Toggle */}
           <div className="flex items-center justify-between px-4 py-2">
             <div className="flex items-center">
-              <User className="mr-2 h-4 w-4" />
+              <Settings className="mr-4 h-4 w-4" />
               <span className="text-sm">{tSideBar("darkMode")}</span>
             </div>
             <Switch checked={isDarkMode} onCheckedChange={handleThemeToggle} />
@@ -153,7 +153,7 @@ export function ProfileDropdown() {
             onClick={handleLogout}
             className="cursor-pointer text-red-600 focus:text-red-600 px-4 py-2"
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <LogOut className="text-foreground mr-2 h-4 w-4" />
             <span>{tSideBar("logout")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>

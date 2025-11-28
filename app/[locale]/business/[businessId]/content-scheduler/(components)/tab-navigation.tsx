@@ -9,32 +9,34 @@ interface TabNavigationProps {
   onTabChange: (tab: "manual" | "auto" | "history") => void;
 }
 
-
 export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   const t = useTranslations("contentScheduler");
   const tabs: { id: "manual" | "auto" | "history"; label: string }[] = [
-    { id: "manual", label: t("postingManual") },
+    { id: "manual", label: t("postingManual")},
     { id: "auto", label: t("postingAutomatic") },
     { id: "history", label: t("history") },
   ];
   return (
-    <div className="flex space-x-1 bg-card p-1 rounded-lg">
-      {tabs.map((tab) => (
-        <Button
+
+
+      <div className="flex flex-row bg-card p-1 rounded-lg justify-between overflow-x-auto">
+        {tabs.map((tab) => (
+          <Button
           key={tab.id}
           variant={activeTab === tab.id ? "default" : "ghost"}
-          size="sm"
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "flex-1 p-4 sm:p-6 text-xs sm:text-sm",
-            activeTab === tab.id
-              ? "bg-primary text-white"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          {tab.label}
-        </Button>
-      ))}
-    </div>
+              " p-6 flex-1",
+              activeTab === tab.id
+                ? "bg-primary text-white"
+                : "text-muted-foreground hover:text-foreground"
+              )}
+              >
+            {tab.label}
+          </Button>
+        ))}
+      </div>
+        
+
   );
 }

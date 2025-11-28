@@ -70,12 +70,11 @@ function ContentSchedulerInner() {
   };
 
   return (
-    <main className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 md:ml-0">
+    <main className=" max-w-screen p-4 sm:p-6 space-y-4 sm:space-y-6 md:ml-0">
       {/* Header Section */}
       <WelcomeSection
         title= {t("contentScheduler")}
         message={t("manageSocialMedia")}
-        showTimezoneSelector
       />
 
       {/* Tab Navigation */}
