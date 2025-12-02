@@ -7,6 +7,8 @@ export const DEFAULT_PLACEHOLDER_IMAGE = "/placeholder.png";
 
 export const LANDING_PAGE_URL = process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://postmatic.id";
 
+export const DOCUMENTATION_PAGE_URL = "https://docs.postmatic.id";
+
 export const ACCESS_TOKEN_KEY = "postmaticAccessToken";
 export const REFRESH_TOKEN_KEY = "postmaticRefreshToken";
 

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { ConnectedPlatformForm } from "@/app/[locale]/business/[businessId]/knowledge-base/(components)/(form)/connected-platform-form";
 import { Link } from "@/i18n/navigation";
-import { LANDING_PAGE_URL } from "@/constants";
+import { DOCUMENTATION_PAGE_URL, LANDING_PAGE_URL } from "@/constants";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 
@@ -42,17 +42,19 @@ export function PlatformModal({ isOpen, onClose }: PlatformModalProps) {
           className="items-center"
         >
           <Link
-            className="text-sm flex items-center gap-1"
+            className="text-sm"
             href={
-              LANDING_PAGE_URL + "/" + locale + "/faq/how-to-connect-platform"
+              DOCUMENTATION_PAGE_URL + "/docs/category/setup-akun-platform"
             }
             target="_blank"
             prefetch={false}
           >
             <span className="text-muted-foreground">
               {m("cannotConnectPlatform")}
+            </span>{" "}
+            <span className="text-primary whitespace-nowrap">
+              {m("clickHere")}
             </span>
-            <span className="text-primary">{m("clickHere")}</span>
           </Link>
         </DialogFooterWithButton>
       </DialogContent>
