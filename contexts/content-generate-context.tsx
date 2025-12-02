@@ -93,6 +93,7 @@ interface BasicForm extends GenerateContentBase {
   referenceImagePublisher: string | null;
   caption: string;
   model: string;
+  imageSize: string | null;
 }
 
 interface ContentGenerateContext {
@@ -244,6 +245,7 @@ const initialFormBasic: ContentGenerateContext["form"]["basic"] = {
   referenceImagePublisher: null,
   caption: "",
   model: "",
+  imageSize: null,
 };
 
 const initialFormAdvance: GenerateContentAdvanceBase = {
@@ -344,10 +346,13 @@ export const ContentGenerateProvider = ({
   // Set default AI model when models are loaded
   useEffect(() => {
     if (aiModelsRes?.data?.data && aiModelsRes.data.data.length > 0 && !selectedAiModel) {
-      setSelectedAiModel(aiModelsRes.data.data[0]);
+      const defaultModel = aiModelsRes.data.data[0];
+      setSelectedAiModel(defaultModel);
       setFormBasic(prev => ({
         ...prev,
-        model: aiModelsRes.data.data[0].name
+        model: defaultModel.name,
+        ratio: (defaultModel.validRatios[0] || prev.ratio || "1:1") as ValidRatio,
+        imageSize: defaultModel.imageSizes?.[0] || null,
       }));
     }
   }, [aiModelsRes, selectedAiModel]);
@@ -384,6 +389,10 @@ export const ContentGenerateProvider = ({
         referenceImage: item?.result?.images[0] || "",
         ratio: (item?.result?.ratio || "1:1") as ValidRatio,
         model: item?.input?.model || "",
+        imageSize:
+          item?.input?.imageSize ||
+          modelFromHistory?.imageSizes?.[0] ||
+          null,
       }));
       setSelectedJobId(item.id);
       setFormAdvance(initialFormAdvance);
@@ -943,11 +952,12 @@ export const ContentGenerateProvider = ({
 
   const onSelectAiModel = (model: AiModelRes) => {
     setSelectedAiModel(model);
-      setFormBasic(prev => ({
-        ...prev,
-        model: model.name,
-        ratio: (model.validRatios[0] || "1:1") as ValidRatio // Set to first valid ratio
-      }));
+    setFormBasic((prev) => ({
+      ...prev,
+      model: model.name,
+      ratio: (model.validRatios[0] || "1:1") as ValidRatio, // Set to first valid ratio
+      imageSize: model.imageSizes?.[0] || null,
+    }));
   };
 
   /**
@@ -989,6 +999,7 @@ export const ContentGenerateProvider = ({
               productKnowledgeId: form.basic.productKnowledgeId,
               referenceImage: form.basic.referenceImage,
               model: form.basic.model,
+              imageSize: form.basic.imageSize,
             },
           });
 
@@ -1022,6 +1033,7 @@ export const ContentGenerateProvider = ({
               advancedGenerate: form.advance,
               rss: form.rss,
               model: form.basic.model,
+              imageSize: form.basic.imageSize,
             },
           });
 
@@ -1055,6 +1067,7 @@ export const ContentGenerateProvider = ({
               prompt: form.basic.prompt || "",
               ratio: form.basic.ratio,
               model: form.basic.model,
+              imageSize: form.basic.imageSize,
             },
           });
 
@@ -1094,6 +1107,7 @@ export const ContentGenerateProvider = ({
               productKnowledgeId:
                 selectedHistory?.result?.productKnowledgeId || "",
               model: form.basic.model,
+              imageSize: form.basic.imageSize,
             },
           });
           await afterSubmitGenerate(resMask?.data?.data?.jobId);

@@ -104,6 +104,7 @@ export interface JobData {
     advancedGenerate: GenerateContentAdvanceBase;
     productKnowledgeId: string;
     model: string;
+    imageSize?: string | null;
   };
   error: { message: string; stack: string | null; attempt: number } | null;
   stage: JobStage;

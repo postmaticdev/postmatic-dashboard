@@ -77,6 +77,7 @@ interface BasicForm extends GenerateContentBase {
   referenceImagePublisher: string | null;
   caption: string;
   model: string;
+  imageSize: string | null;
 }
 
 type Ctx = {
@@ -223,6 +224,7 @@ const initialFormBasic: BasicForm = {
   referenceImagePublisher: null,
   caption: "",
   model: "",
+  imageSize: null,
 };
 
 const initialFormAdvance: GenerateContentAdvanceBase = {
@@ -295,10 +297,13 @@ export function AutoGenerateProvider({
   // Set default AI model when models are loaded
   useEffect(() => {
     if (aiModelsRes?.data?.data && aiModelsRes.data.data.length > 0 && !selectedAiModel) {
-      setSelectedAiModel(aiModelsRes.data.data[0]);
+      const defaultModel = aiModelsRes.data.data[0];
+      setSelectedAiModel(defaultModel);
       setFormBasic(prev => ({
         ...prev,
-        model: aiModelsRes.data.data[0].name
+        model: defaultModel.name,
+        ratio: (defaultModel.validRatios[0] || prev.ratio || "1:1") as ValidRatio,
+        imageSize: defaultModel.imageSizes?.[0] || null,
       }));
     }
   }, [aiModelsRes, selectedAiModel]);
@@ -591,7 +596,8 @@ export function AutoGenerateProvider({
         ...prev,
         model: model.name,
         // Only change ratio if current ratio is not valid for new model
-        ratio: isValidRatio ? currentRatio : (model.validRatios[0] || "1:1") as ValidRatio
+        ratio: isValidRatio ? currentRatio : (model.validRatios[0] || "1:1") as ValidRatio,
+        imageSize: model.imageSizes?.[0] || null,
       };
     });
   }, []);

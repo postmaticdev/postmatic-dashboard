@@ -110,6 +110,7 @@ export function GenerationPanel() {
         )}
 
         {/* Caption for desktop */}
+        {selectedHistory !== null && (
         <div className="hidden lg:block  flex-col space-y-2">
           <div className="font-bold text-xl">Caption</div>
           <Textarea
@@ -136,6 +137,7 @@ export function GenerationPanel() {
             {c("enhanceCaption")}
           </Button>
         </div>
+          )}
       </div>
     </div>
   );

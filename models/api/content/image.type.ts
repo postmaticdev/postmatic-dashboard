@@ -37,6 +37,7 @@ export interface GenerateContentBase {
   prompt: string | null;
   referenceImage: string | null;
   model: string;
+  imageSize?: string | null;
 }
 
 export interface GenerateContentAdvanceBase {
