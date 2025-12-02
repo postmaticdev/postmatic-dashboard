@@ -346,7 +346,7 @@ export const ContentGenerateProvider = ({
   // Set default AI model when models are loaded
   useEffect(() => {
     if (aiModelsRes?.data?.data && aiModelsRes.data.data.length > 0 && !selectedAiModel) {
-      const defaultModel = aiModelsRes.data.data[0];
+      const defaultModel = aiModelsRes.data.data[2];
       setSelectedAiModel(defaultModel);
       setFormBasic(prev => ({
         ...prev,
@@ -400,15 +400,30 @@ export const ContentGenerateProvider = ({
       setMode("regenerate");
       setTab("knowledge");
     } else {
+      const defaultModel =
+        aiModelsRes?.data?.data?.find(
+          (model) => model.name === "gemini-3-pro-image-preview"
+        ) ||
+        aiModelsRes?.data?.data?.[0] ||
+        selectedAiModel;
+      if (defaultModel) {
+        setSelectedAiModel(defaultModel);
+      }
       setMode("knowledge");
       setTab("knowledge");
       setSelectedJobId(null);
-      form.setBasic(initialFormBasic);
+      form.setBasic({
+        ...initialFormBasic,
+        model: defaultModel?.name || initialFormBasic.model,
+        ratio: (defaultModel?.validRatios[0] ||
+          initialFormBasic.ratio) as ValidRatio,
+        imageSize: defaultModel?.imageSizes?.[0] || null,
+      });
       form.setAdvance(initialFormAdvance);
     }
     setFormRss(null);
     setIsDraftSaved(false); // Reset draft saved state when selecting new history
-  }, [aiModelsRes]);
+  }, [aiModelsRes, selectedAiModel]);
 
   /**
    *

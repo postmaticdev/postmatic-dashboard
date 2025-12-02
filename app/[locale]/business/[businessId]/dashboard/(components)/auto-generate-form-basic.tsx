@@ -177,6 +177,31 @@ export const AutoGenerateFormBasic = () => {
         </select>
       </div>
 
+      {aiModels.selectedModel?.name === "gemini-3-pro-image-preview" &&
+        aiModels.selectedModel?.imageSizes?.length ? (
+        <div>
+          <label className="block text-sm font-medium mb-2">Image Size</label>
+          <select
+            className={cn(
+              "w-full p-2 rounded-md text-sm border border-input bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring",
+              isLoading
+            )}
+            disabled={isLoading || aiModels.isLoading}
+            value={basic?.imageSize || ""}
+            onChange={(e) => {
+              
+              setBasic({ ...basic, imageSize: e.target.value });
+            }}
+          >
+            {(aiModels.selectedModel?.imageSizes || []).map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+
       {/* Aspect Ratio */}
       <div>
         <label className="block text-sm font-medium mb-2">{t("aspectRatio")}</label>
