@@ -67,6 +67,7 @@ export default function CheckoutPage() {
         const sp = new URLSearchParams();
         if (product?.id) sp.set("productId", product.id);
         if (product?.type) sp.set("type", product.type);
+        if (res.data.data.expiredAt) sp.set("expiredAt", res.data.data.expiredAt);
         const query = sp.toString();
         const target = query
           ? `/business/${businessId}/pricing/checkout/${res.data.data.id}?${query}`

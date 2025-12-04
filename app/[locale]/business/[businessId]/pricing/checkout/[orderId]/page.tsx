@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { OrderSummary } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/order-summary";
 import { PaymentConfirmation } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/payment-confirmation";
@@ -10,6 +10,7 @@ import { CheckoutFooter } from "@/app/[locale]/business/[businessId]/pricing/che
 import { useCheckout } from "@/contexts/checkout-context";
 import { useBusinessPurchaseGetDetail } from "@/services/purchase.api";
 import { useTranslations } from "next-intl";
+import { LogoLoader } from "@/components/base/logo-loader";
 
 export default function CheckoutOrderPage() {
   const { businessId, orderId } = useParams() as {
@@ -23,29 +24,30 @@ export default function CheckoutOrderPage() {
     orderId
   );
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const searchParams = useSearchParams();
+  const expiredAtFallback = searchParams.get("expiredAt") || undefined;
 
   useEffect(() => {
     const purchase = data?.data?.data;
     if (purchase) {
       setCheckoutResult((prev) => {
-        const merged = {
-          ...prev,
+        const expiredAt =
+          purchase.expiredAt ?? prev?.expiredAt ?? expiredAtFallback ?? null;
+        return {
+          ...(prev ?? {}),
           ...purchase,
-        } as typeof purchase;
-        if (!merged.expiredAt && prev?.expiredAt) {
-          (merged as any).expiredAt = prev.expiredAt;
-        }
-        return merged;
+          expiredAt: expiredAt ?? undefined,
+        };
       });
       setShowPaymentSuccess(purchase.status === "Success");
     }
-  }, [data, setCheckoutResult]);
+  }, [data, setCheckoutResult, expiredAtFallback]);
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
-        {t("toast.validation.processing")}
-      </div>
+      <div className="flex justify-center items-center h-[calc(100vh-64px)]">
+      <LogoLoader />
+    </div>
     );
   }
 
