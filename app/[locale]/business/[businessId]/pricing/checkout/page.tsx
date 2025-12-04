@@ -1,13 +1,9 @@
 "use client";
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { OrderSummary } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/order-summary";
 import { PaymentMethodGrid } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/payment-method-grid";
 import { PromoCodeSection } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/promo-code-section";
-import { PaymentConfirmation } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/payment-confirmation";
-import { PaymentSuccess } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/payment-success";
 import { CheckoutFooter } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/checkout-footer";
-import { MobileBackButton } from "@/app/[locale]/business/[businessId]/pricing/checkout/(components)/mobile-back-button";
 import {
   useCheckoutPayBank,
   useCheckoutPayEWallet,
@@ -18,17 +14,16 @@ import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 
 export default function CheckoutPage() {
   const { businessId } = useParams() as { businessId: string };
+  const router = useRouter();
   const mCheckoutPayBank = useCheckoutPayBank();
   const mCheckoutPayEWallet = useCheckoutPayEWallet();
   const queryClient = useQueryClient();
   const { selectedPayment, product, setCheckoutResult, promoState } =
     useCheckout();
-
-  const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false);
-  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   const isLoading = mCheckoutPayBank.isPending || mCheckoutPayEWallet.isPending;
   const disabled = !selectedPayment || !product || isLoading;
@@ -69,7 +64,14 @@ export default function CheckoutPage() {
       const res = await performCheckout(discountCode);
       if (res?.data?.data) {
         setCheckoutResult(res.data.data);
-        setShowPaymentConfirmation(true);
+        const sp = new URLSearchParams();
+        if (product?.id) sp.set("productId", product.id);
+        if (product?.type) sp.set("type", product.type);
+        const query = sp.toString();
+        const target = query
+          ? `/business/${businessId}/pricing/checkout/${res.data.data.id}?${query}`
+          : `/business/${businessId}/pricing/checkout/${res.data.data.id}`;
+        router.push(target);
       }
     } catch (error: unknown) {
       type ApiError = {
@@ -81,6 +83,7 @@ export default function CheckoutPage() {
         const apiError = error as ApiError;
         message = apiError.response?.data?.metaData?.message ?? message;
       }
+      // showToast("error", message);
       
     } finally {
       queryClient.clear();
@@ -101,42 +104,32 @@ export default function CheckoutPage() {
 
         <Card className="border border-border">
           <CardContent className="p-3 sm:p-4 lg:p-8">
-            {showPaymentSuccess ? (
-              /* Payment Success Card */
-              <PaymentSuccess />
-            ) : showPaymentConfirmation ? (
-              /* Payment Confirmation Card */
-              <PaymentConfirmation
-                setShowPaymentSuccess={setShowPaymentSuccess}
-              />
-            ) : (
-              <>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 text-gray-900 dark:text-white">
-                  {t("checkout.paymentMethod")}
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base leading-relaxed">
-                  {t("toast.validation.selectPaymentMethod")}
-                </p>
+            <>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+                {t("checkout.paymentMethod")}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base leading-relaxed">
+                {t("toast.validation.selectPaymentMethod")}
+              </p>
 
-                {/* Payment method grid */}
-                <PaymentMethodGrid />
+              {/* Payment method grid */}
+              <PaymentMethodGrid />
 
-                {/* Promo code section */}
-                <PromoCodeSection />
+              {/* Promo code section */}
+              <PromoCodeSection />
 
-                {/* Continue button */}
-                <button
-                  onClick={handleCheckout}
-                  disabled={disabled}
-                  className={cn(
-                    "bg-blue-600 dark:bg-blue-500 text-white text-sm sm:text-base lg:text-lg font-medium w-full py-3 sm:py-3 lg:py-4 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
-                    disabled && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  {isLoading ? t("toast.validation.processing") : t("toast.validation.continue")}
-                </button>
-              </>
-            )}
+              {/* Continue button */}
+              <button
+                onClick={handleCheckout}
+                disabled={disabled}
+                className={cn(
+                  "bg-blue-600 dark:bg-blue-500 text-white text-sm sm:text-base lg:text-lg font-medium w-full py-3 sm:py-3 lg:py-4 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+                  disabled && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                {isLoading ? t("toast.validation.processing") : t("toast.validation.continue")}
+              </button>
+            </>
           </CardContent>
         </Card>
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCheckout } from "@/contexts/checkout-context";
 import { useDateFormat } from "@/hooks/use-date-format";
@@ -7,7 +7,12 @@ import { formatIdr } from "@/helper/formatter";
 import { mapEnumPaymentStatus } from "@/helper/map-enum-payment-status";
 import { showToast } from "@/helper/show-toast";
 import { cn } from "@/lib/utils";
-import { PaymentAction } from "@/models/api/purchase/checkout.type";
+import {
+  PaymentAction as CheckoutPaymentAction,
+} from "@/models/api/purchase/checkout.type";
+import {
+  PaymentAction as BusinessPaymentAction,
+} from "@/models/api/purchase/business.type";
 import { businessPurchaseService } from "@/services/purchase.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
@@ -15,6 +20,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+type PaymentAction = CheckoutPaymentAction | BusinessPaymentAction;
 
 interface PaymentConfirmationProps {
   setShowPaymentSuccess: (show: boolean) => void;
@@ -350,8 +356,8 @@ export function PaymentConfirmation({
         </h1>
       </div>
 
-      <p className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">
-        {product?.name} • Total {formatIdr(detailPricing?.total)}
+            <p className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">
+        {(product?.name || checkoutResult?.productName || "")} - Total {formatIdr(detailPricing?.total)}
       </p>
 
       {checkoutResult?.paymentActions.map((action, index) => (
@@ -367,8 +373,7 @@ export function PaymentConfirmation({
             {t("checkout.payBefore")}
           </span>
           <span className="text-orange-600 dark:text-orange-400 font-bold text-base sm:text-lg">
-            {formatDate(new Date(checkoutResult?.expiredAt))}{" "}
-            {dateFormat.getHhMm(new Date(checkoutResult?.expiredAt))}
+            {checkoutResult?.expiredAt ? `${formatDate(new Date(checkoutResult?.expiredAt))} ${dateFormat.getHhMm(new Date(checkoutResult?.expiredAt))}` : "-"}
           </span>
         </div>
       </div>
@@ -387,7 +392,7 @@ export function PaymentConfirmation({
       </button>
 
       <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 break-words">
-        {t("checkout.paymentExpiredAt")}: {checkoutResult?.expiredAt}
+        {t("checkout.paymentExpiredAt")}: {checkoutResult?.expiredAt ?? "-"}
       </p>
     </div>
   );
@@ -533,3 +538,13 @@ function Note({ text }: { text: string }) {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+

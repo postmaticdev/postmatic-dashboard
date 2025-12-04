@@ -5,6 +5,7 @@ export interface BusinessPurchaseRes {
   productName: string;
   productType: string;
   status: EnumPaymentStatus;
+  expiredAt?: string;
   createdAt: string;
   updatedAt: string;
   paymentActions: PaymentAction[];

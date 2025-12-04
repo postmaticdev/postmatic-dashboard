@@ -10,8 +10,16 @@ interface OrderSummaryProps {
 
 export function OrderSummary({ variant }: OrderSummaryProps) {
   const isDesktop = variant === "sidebar";
-  const { product, detailPricing } = useCheckout();
+  const { product, detailPricing, checkoutResult } = useCheckout();
   const t = useTranslations("checkout");
+
+  const price =
+    product?.defaultPrice ??
+    detailPricing?.item ??
+    checkoutResult?.totalAmount ??
+    0;
+  const productName = product?.name ?? checkoutResult?.productName ?? "-";
+  const billedInfo = product?.validForInfo ?? checkoutResult?.productType;
 
   const detailItems = [
     {
@@ -72,11 +80,11 @@ export function OrderSummary({ variant }: OrderSummaryProps) {
               isDesktop ? "text-3xl" : "text-2xl"
             }`}
           >
-            {formatIdr(product?.defaultPrice || 0)}{" "}
+            {formatIdr(price)}{" "}
             <span
               className={` font-normal ${isDesktop ? "text-lg" : "text-base"}`}
             >
-              per {product?.validForInfo}
+              per {billedInfo}
             </span>
           </div>
 
@@ -124,7 +132,7 @@ export function OrderSummary({ variant }: OrderSummaryProps) {
                   isDesktop ? "text-base" : "text-sm"
                 }`}
               >
-                {formatIdr(product?.defaultPrice || 0)}
+                {formatIdr(price)}
               </div>
             </div>
           </div>
