@@ -49,10 +49,21 @@ export default function BusinessClientLayout({
   const pathEquals = (pattern: string) =>
     businessId ? pathname === applyBusinessId(pattern) : matchPattern(pattern);
 
+  
+  
+  
+  const isCheckoutPath = (() => {
+    const base = businessId
+    ? CHECKOUT_PATTERN.replace("[businessId]", businessId)
+    : "/business/[^/]+/pricing/checkout";
+    const re = businessId
+    ? new RegExp("^" + base + "(?:/[^/]+)?$") // checkout atau checkout/<something>
+    : new RegExp("^" + base + "(?:/[^/]+)?$");
+    return re.test(pathname);
+  })();
+  
   const isSkipHeader = SKIP_HEADER_PATHS.some(pathEquals);
-  const isSkipSidebar = SKIP_SIDEBAR_PATHS.some(pathEquals);
-  const isCheckoutPath = pathEquals(CHECKOUT_PATTERN);
-
+  const isSkipSidebar = isCheckoutPath || SKIP_SIDEBAR_PATHS.some(pathEquals);
   // Header:
   // - Checkout: tampilkan di mobile saja (md:hidden)
   // - Selain checkout: tampilkan normal jika tidak di-skip
