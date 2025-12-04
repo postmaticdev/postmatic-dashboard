@@ -24,52 +24,64 @@ export default function CheckoutPage() {
   const mCheckoutPayBank = useCheckoutPayBank();
   const mCheckoutPayEWallet = useCheckoutPayEWallet();
   const queryClient = useQueryClient();
-  const { selectedPayment, product, setCheckoutResult, promoCode } =
+  const { selectedPayment, product, setCheckoutResult, promoState } =
     useCheckout();
 
   const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   const isLoading = mCheckoutPayBank.isPending || mCheckoutPayEWallet.isPending;
-  const disabled = !selectedPayment || !product?.isValidCode || isLoading;
+  const disabled = !selectedPayment || !product || isLoading;
   const t = useTranslations();
 
+  const performCheckout = async (discountCode?: string) => {
+    if (!selectedPayment) return;
+    if (selectedPayment.type === "Virtual Account") {
+      return mCheckoutPayBank.mutateAsync({
+        businessId,
+        formData: {
+          bank: selectedPayment.code,
+          productId: product?.id || "",
+          type: product?.type as "subscription" | "token",
+          discountCode,
+        },
+      });
+    }
+    return mCheckoutPayEWallet.mutateAsync({
+      businessId,
+      formData: {
+        productId: product?.id || "",
+        type: product?.type as "subscription" | "token",
+        discountCode,
+        acquirer: selectedPayment.code as "gopay" | "qris",
+      },
+    });
+  };
+
   const handleCheckout = async () => {
+    const discountCode = promoState?.trim() || undefined;
+
     try {
       if (!selectedPayment) {
         showToast("error", t("toast.validation.selectPaymentMethod"));
         return;
       }
-      if (!product?.isValidCode) {
-        showToast("error", t("toast.validation.invalidPromoCode"));
-        return;
-      }
-      if (selectedPayment.type === "Virtual Account") {
-        const res = await mCheckoutPayBank.mutateAsync({
-          businessId,
-          formData: {
-            bank: selectedPayment.code,
-            productId: product?.id,
-            type: product?.type,
-            discountCode: promoCode,
-          },
-        });
-        setCheckoutResult(res.data.data);
-        setShowPaymentConfirmation(true);
-      } else if (selectedPayment.type === "E-Wallet") {
-        const res = await mCheckoutPayEWallet.mutateAsync({
-          businessId,
-          formData: {
-            productId: product?.id,
-            type: product?.type,
-            discountCode: promoCode,
-            acquirer: selectedPayment.code as "gopay" | "qris",
-          },
-        });
+      const res = await performCheckout(discountCode);
+      if (res?.data?.data) {
         setCheckoutResult(res.data.data);
         setShowPaymentConfirmation(true);
       }
-    } catch {
+    } catch (error: unknown) {
+      type ApiError = {
+        response?: { data?: { metaData?: { message?: string } } };
+      };
+
+      let message = t("toast.validation.invalidPromoCode");
+      if (error && typeof error === "object" && "response" in error) {
+        const apiError = error as ApiError;
+        message = apiError.response?.data?.metaData?.message ?? message;
+      }
+      
     } finally {
       queryClient.clear();
     }
